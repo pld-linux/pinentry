@@ -13,10 +13,12 @@ Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	28f5638fdec96b3429ad02ef08e997f5
 Patch0:		%{name}-cxx.patch
+Patch1:		%{name}-system-assuan.patch
 URL:		http://www.gnupg.org/
 BuildRequires:	autoconf >= 2.52
 BuildRequires:	automake >= 1.5
 %{!?_without_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
+BuildRequires:	libassuan-devel >= 1:0.6.0
 BuildRequires:	libcap-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
@@ -57,20 +59,10 @@ Simple PIN or passphrase entry dialog for Qt.
 %description qt -l pl
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla Qt.
 
-%package -n libassuan-devel
-Summary:	Assuan protocol static library
-Summary(pl):	Statyczna biblioteka obs³uguj±ca protokó³ Assuan
-Group:		Development/Libraries
-
-%description -n libassuan-devel
-Assuan protocol static library.
-
-%description -n libassuan-devel -l pl
-Statyczna biblioteka obs³uguj±ca protokó³ Assuan.
-
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 ./autogen.sh
@@ -88,10 +80,6 @@ CPPFLAGS="-I/usr/include/ncurses"
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
-
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}}
-install assuan/libassuan.a $RPM_BUILD_ROOT%{_libdir}
-install assuan/assuan.h $RPM_BUILD_ROOT%{_includedir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -115,8 +103,3 @@ rm -rf $RPM_BUILD_ROOT
 %files qt
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-qt
-
-%files -n libassuan-devel
-%defattr(644,root,root,755)
-%{_libdir}/libassuan.a
-%{_includedir}/assuan.h
