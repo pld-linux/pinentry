@@ -1,26 +1,30 @@
 #
 # Conditional build:
-%bcond_without	gtk	# without GTK+ dialog
+%bcond_without	gtk	# without GTK+ 1.x dialog
+%bcond_without	gtk2	# without GTK+ 2 dialog
 %bcond_without	qt	# without Qt dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl):	Proste kontrolki dialogowe do wpisywania PIN-ów lub hase³
 Name:		pinentry
-Version:	0.7.1
+Version:	0.7.2
 Release:	1
 License:	GPL
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
-# Source0-md5:	7861d63dea6434a5a05da84e83f209e6
+# Source0-md5:	55626ce13ed76d82ec5330d19bdf3ab4
 Patch0:		%{name}-system-assuan.patch
+Patch1:		%{name}-info.patch
 URL:		http://www.gnupg.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake >= 1:1.7.6
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
+%{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
 BuildRequires:	libassuan-devel >= 1:0.6.0
 BuildRequires:	libcap-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
+BuildRequires:	pkgconfig
 %{?with_qt:BuildRequires:	qt-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -37,15 +41,27 @@ wiêcej szczegó³ów pod adresem http://www.gnupg.org/aegypten/.
 Podstawowy pakiet zawiera kontrolkê opart± na curses.
 
 %package gtk
-Summary:	Simple PIN or passphrase entry dialog for GTK+
-Summary(pl):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla GTK+
+Summary:	Simple PIN or passphrase entry dialog for GTK+ 1.x
+Summary(pl):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla GTK+ 1.x
 Group:		X11/Applications
 
 %description gtk
-Simple PIN or passphrase entry dialog for GTK+.
+Simple PIN or passphrase entry dialog for GTK+ 1.x.
 
 %description gtk -l pl
-Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla GTK+.
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla GTK+ 1.x.
+
+%package gtk2
+Summary:	Simple PIN or passphrase entry dialog for GTK+ 2
+Summary(pl):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla GTK+ 2
+Group:		X11/Applications
+Requires:	gtk+2 >= 2:2.4.0
+
+%description gtk2
+Simple PIN or passphrase entry dialog for GTK+ 2.
+
+%description gtk2 -l pl
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla GTK+ 2.
 
 %package qt
 Summary:	Simple PIN or passphrase entry dialog for Qt
@@ -61,9 +77,10 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla Qt.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
-%{__aclocal}
+%{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
@@ -73,6 +90,7 @@ CPPFLAGS="-I/usr/include/ncurses"
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
 	--%{!?with_gtk:dis}%{?with_gtk:en}able-pinentry-gtk \
+	--%{!?with_gtk2:dis}%{?with_gtk2:en}able-pinentry-gtk2 \
 	--%{!?with_qt:dis}%{?with_qt:en}able-pinentry-qt \
 	--with-qt-includes=/usr/include/qt
 
@@ -103,6 +121,12 @@ rm -rf $RPM_BUILD_ROOT
 %files gtk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-gtk
+%endif
+
+%if %{with gtk2}
+%files gtk2
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pinentry-gtk-2
 %endif
 
 %if %{with qt}
