@@ -15,7 +15,7 @@ Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
 Patch0:		%{name}-system-assuan.patch
 URL:		http://www.gnupg.org/
 BuildRequires:	autoconf >= 2.57
-BuildRequires:	automake >= 1.7.6
+BuildRequires:	automake >= 1:1.7.6
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 BuildRequires:	libassuan-devel >= 1:0.6.0
 BuildRequires:	libcap-devel
