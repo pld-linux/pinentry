@@ -11,6 +11,7 @@ Release:	1
 License:	GPL
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/alpha/aegypten/%{name}-%{version}.tar.gz
+# Source0-md5:	be8460bc1ecc2596fabea931a48c5080
 Patch0:		%{name}-cxx.patch
 URL:		http://www.gnupg.org/
 BuildRequires:	autoconf >= 2.52
