@@ -88,8 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT%{_libdir}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}}
 install assuan/libassuan.a $RPM_BUILD_ROOT%{_libdir}
+install assuan/assuan.h $RPM_BUILD_ROOT%{_includedir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -117,3 +118,4 @@ rm -rf $RPM_BUILD_ROOT
 %files -n libassuan-devel
 %defattr(644,root,root,755)
 %{_libdir}/libassuan.a
+%{_includedir}/assuan.h
