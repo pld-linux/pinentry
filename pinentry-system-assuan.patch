@@ -31,20 +31,21 @@
  	$(LIBCAP) $(GTK_LIBS) $(libcurses)
  
  pinentry_gtk_SOURCES = pinentry-gtk.c \
---- pinentry-0.7.0/qt/Makefile.am.orig	2003-12-23 09:39:00.000000000 +0100
-+++ pinentry-0.7.0/qt/Makefile.am	2003-12-24 02:54:32.645525240 +0100
-@@ -32,10 +32,10 @@
+--- pinentry-0.7.0/qt/Makefile.am.orig	2004-09-21 20:58:02.000000000 +0200
++++ pinentry-0.7.0/qt/Makefile.am	2004-12-05 14:27:50.000000000 +0100
+@@ -32,11 +32,11 @@
  endif
  
  
--AM_CPPFLAGS = -I$(top_srcdir)/assuan -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include)
-+AM_CPPFLAGS = -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include)
+-AM_CPPFLAGS = -I$(top_srcdir)/assuan -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include) \
++AM_CPPFLAGS = -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include) \
+ 	-I$(top_srcdir)/pinentry
  AM_CXXFLAGS = $(QT_CXXFLAGS)
  pinentry_qt_LDADD = $(QT_LIBS) $(libcurses) ../pinentry/libpinentry.a \
 -	$(top_builddir)/assuan/libassuan.a \
 +	-lassuan \
  	$(top_builddir)/secmem/libsecmem.a $(LIBCAP)
- pinentry_qt_LDFLAGS = $(QT_LDFLAGS)
+ pinentry_qt_LDFLAGS = $(QT_LDFLAGS) $(QT_RPATH)
  
 --- pinentry-0.6.9/Makefile.am.orig	Tue Dec 17 11:14:29 2002
 +++ pinentry-0.6.9/Makefile.am	Thu Aug 21 10:49:12 2003
@@ -54,7 +55,7 @@
  
 -SUBDIRS = assuan secmem pinentry ${pinentry_curses} \
 +SUBDIRS = secmem pinentry ${pinentry_curses} \
- 	${pinentry_gtk} ${pinentry_qt} doc
+ 	${pinentry_gtk} ${pinentry_gtk_2} ${pinentry_qt} doc
  
  signed-dist: $(distdir).tar.gz.sig
 --- pinentry-0.7.0/pinentry/pinentry.c.orig	2003-12-22 19:28:07.000000000 +0100
@@ -76,3 +77,14 @@
                                      table[i].name, table[i].handler);
        if (rc)
          return rc;
+--- pinentry/gtk+-2/Makefile.am~	2004-08-17 20:21:03.000000000 +0200
++++ pinentry/gtk+-2/Makefile.am	2004-12-05 14:41:04.000000000 +0100
+@@ -31,7 +31,7 @@
+ 
+ AM_CPPFLAGS = $(GTK2CFLAGS) $(ncurses_include) \
+ 	-I$(top_srcdir)/secmem -I$(top_srcdir)/pinentry
+-LDADD = ../pinentry/libpinentry.a ../assuan/libassuan.a ../secmem/libsecmem.a \
++LDADD = ../pinentry/libpinentry.a -lassuan ../secmem/libsecmem.a \
+ 	$(LIBCAP) $(GTK2LIBS) $(libcurses)
+ 
+ pinentry_gtk_2_SOURCES = pinentry-gtk-2.c \
