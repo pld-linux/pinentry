@@ -26,6 +26,7 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
 %{?with_qt:BuildRequires:	qt-devel}
+BuildRequires:	texinfo
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
