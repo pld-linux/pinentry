@@ -31,20 +31,21 @@
  	$(LIBCAP) $(GTK_LIBS) $(libcurses)
  
  pinentry_gtk_SOURCES = pinentry-gtk.c \
---- pinentry-0.6.9/qt/Makefile.am.orig	Wed Apr 23 01:17:31 2003
-+++ pinentry-0.6.9/qt/Makefile.am	Thu Aug 21 10:50:43 2003
-@@ -30,9 +30,9 @@
+--- pinentry-0.7.0/qt/Makefile.am.orig	2003-12-23 09:39:00.000000000 +0100
++++ pinentry-0.7.0/qt/Makefile.am	2003-12-24 02:54:32.645525240 +0100
+@@ -32,10 +32,10 @@
  endif
  
  
 -AM_CPPFLAGS = -I$(top_srcdir)/assuan -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include)
 +AM_CPPFLAGS = -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include)
  AM_CXXFLAGS = $(QT_CXXFLAGS)
--pinentry_qt_LDADD = $(top_builddir)/assuan/libassuan.a \
-+pinentry_qt_LDADD = -lassuan \
- 	$(top_builddir)/secmem/libsecmem.a $(LIBCAP) \
- 	$(QT_LIBS) $(libcurses)
+ pinentry_qt_LDADD = $(QT_LIBS) $(libcurses) ../pinentry/libpinentry.a \
+-	$(top_builddir)/assuan/libassuan.a \
++	-lassuan \
+ 	$(top_builddir)/secmem/libsecmem.a $(LIBCAP)
  pinentry_qt_LDFLAGS = $(QT_LDFLAGS)
+ 
 --- pinentry-0.6.9/Makefile.am.orig	Tue Dec 17 11:14:29 2002
 +++ pinentry-0.6.9/Makefile.am	Thu Aug 21 10:49:12 2003
 @@ -39,7 +39,7 @@
@@ -56,9 +57,17 @@
  	${pinentry_gtk} ${pinentry_qt} doc
  
  signed-dist: $(distdir).tar.gz.sig
---- pinentry-0.6.9/pinentry/pinentry.c.orig	Sat Feb 15 23:00:28 2003
-+++ pinentry-0.6.9/pinentry/pinentry.c	Thu Aug 21 10:58:27 2003
-@@ -591,8 +591,6 @@
+--- pinentry-0.7.0/pinentry/pinentry.c.orig	2003-12-22 19:28:07.000000000 +0100
++++ pinentry-0.7.0/pinentry/pinentry.c	2003-12-24 03:29:35.018915904 +0100
+@@ -37,6 +37,7 @@
+ #include "secmem-util.h"
+ #include "pinentry.h"
+ 
++#define ASSUAN_Locale_Problem 127
+ 
+ /* Keep the name of our program here. */
+ static char this_pgmname[50]; 
+@@ -649,8 +650,6 @@
    for (i = j = 0; table[i].name; i++)
      {
        rc = assuan_register_command (ctx,
@@ -67,14 +76,3 @@
                                      table[i].name, table[i].handler);
        if (rc)
          return rc;
---- pinentry-0.6.9/qt/pinentrycontroller.cpp.orig	Wed Apr 23 01:10:58 2003
-+++ pinentry-0.6.9/qt/pinentrycontroller.cpp	Thu Aug 21 11:00:54 2003
-@@ -116,8 +116,6 @@
-   
-   for (i=j=0; table[i].name; i++) {
-     rc = assuan_register_command (_ctx,
--				  table[i].cmd_id? table[i].cmd_id
--				  : (ASSUAN_CMD_USER + j++),
- 				  table[i].name, table[i].handler);
-     if (rc) return rc;
-   }
