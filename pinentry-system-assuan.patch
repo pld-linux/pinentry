@@ -1,0 +1,80 @@
+--- pinentry-0.6.9/pinentry/Makefile.am.orig	Thu May  9 14:38:06 2002
++++ pinentry-0.6.9/pinentry/Makefile.am	Thu Aug 21 10:50:04 2003
+@@ -27,7 +27,7 @@
+ 
+ noinst_LIBRARIES = libpinentry.a $(pinentry_curses)
+ 
+-AM_CPPFLAGS = -I$(top_srcdir)/assuan -I$(top_srcdir)/secmem
++AM_CPPFLAGS = -I$(top_srcdir)/secmem
+ 
+ libpinentry_a_SOURCES = pinentry.h pinentry.c
+ libpinentry_curses_a_SOURCES = pinentry-curses.h pinentry-curses.c
+--- pinentry-0.6.9/curses/Makefile.am.orig	Thu May  9 14:38:06 2002
++++ pinentry-0.6.9/curses/Makefile.am	Thu Aug 21 10:49:29 2003
+@@ -23,7 +23,7 @@
+ 
+ AM_CPPFLAGS = $(NCURSES_INCLUDE) -I$(top_srcdir)/pinentry
+ LDADD = ../pinentry/libpinentry.a ../pinentry/libpinentry-curses.a \
+-	../assuan/libassuan.a ../secmem/libsecmem.a \
++	-lassuan ../secmem/libsecmem.a \
+ 	$(LIBCAP) $(LIBCURSES) $(LIBICONV)
+ 
+ pinentry_curses_SOURCES = pinentry-curses.c
+--- pinentry-0.6.9/gtk/Makefile.am.orig	Thu May  9 14:38:06 2002
++++ pinentry-0.6.9/gtk/Makefile.am	Thu Aug 21 10:49:43 2003
+@@ -31,7 +31,7 @@
+ 
+ AM_CPPFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(ncurses_include) \
+ 	-I$(top_srcdir)/secmem -I$(top_srcdir)/pinentry
+-LDADD = ../pinentry/libpinentry.a ../assuan/libassuan.a ../secmem/libsecmem.a \
++LDADD = ../pinentry/libpinentry.a -lassuan ../secmem/libsecmem.a \
+ 	$(LIBCAP) $(GTK_LIBS) $(libcurses)
+ 
+ pinentry_gtk_SOURCES = pinentry-gtk.c \
+--- pinentry-0.6.9/qt/Makefile.am.orig	Wed Apr 23 01:17:31 2003
++++ pinentry-0.6.9/qt/Makefile.am	Thu Aug 21 10:50:43 2003
+@@ -30,9 +30,9 @@
+ endif
+ 
+ 
+-AM_CPPFLAGS = -I$(top_srcdir)/assuan -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include)
++AM_CPPFLAGS = -I$(top_srcdir)/secmem $(QT_INCLUDES) $(ncurses_include)
+ AM_CXXFLAGS = $(QT_CXXFLAGS)
+-pinentry_qt_LDADD = $(top_builddir)/assuan/libassuan.a \
++pinentry_qt_LDADD = -lassuan \
+ 	$(top_builddir)/secmem/libsecmem.a $(LIBCAP) \
+ 	$(QT_LIBS) $(libcurses)
+ pinentry_qt_LDFLAGS = $(QT_LDFLAGS)
+--- pinentry-0.6.9/Makefile.am.orig	Tue Dec 17 11:14:29 2002
++++ pinentry-0.6.9/Makefile.am	Thu Aug 21 10:49:12 2003
+@@ -39,7 +39,7 @@
+ pinentry_qt = 
+ endif
+ 
+-SUBDIRS = assuan secmem pinentry ${pinentry_curses} \
++SUBDIRS = secmem pinentry ${pinentry_curses} \
+ 	${pinentry_gtk} ${pinentry_qt} doc
+ 
+ signed-dist: $(distdir).tar.gz.sig
+--- pinentry-0.6.9/pinentry/pinentry.c.orig	Sat Feb 15 23:00:28 2003
++++ pinentry-0.6.9/pinentry/pinentry.c	Thu Aug 21 10:58:27 2003
+@@ -591,8 +591,6 @@
+   for (i = j = 0; table[i].name; i++)
+     {
+       rc = assuan_register_command (ctx,
+-                                    table[i].cmd_id ? table[i].cmd_id
+-                                                   : (ASSUAN_CMD_USER + j++),
+                                     table[i].name, table[i].handler);
+       if (rc)
+         return rc;
+--- pinentry-0.6.9/qt/pinentrycontroller.cpp.orig	Wed Apr 23 01:10:58 2003
++++ pinentry-0.6.9/qt/pinentrycontroller.cpp	Thu Aug 21 11:00:54 2003
+@@ -116,8 +116,6 @@
+   
+   for (i=j=0; table[i].name; i++) {
+     rc = assuan_register_command (_ctx,
+-				  table[i].cmd_id? table[i].cmd_id
+-				  : (ASSUAN_CMD_USER + j++),
+ 				  table[i].name, table[i].handler);
+     if (rc) return rc;
+   }
