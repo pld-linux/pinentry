@@ -5,19 +5,25 @@
 #
 
 Summary:	Simple PIN or passphrase entry dialogs
+Summary(pl):	Proste kontrolki dialogowe do wpisywania PIN-ów lub hase³
 Name:		pinentry
 Version:	0.6.5
 Release:	1
 License:	GPL
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/alpha/aegypten/%{name}-%{version}.tar.gz
-URL:		http://www.gnupg.org
+URL:		http://www.gnupg.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 This is a collection of simple PIN or passphrase entry dialogs which
 utilize the Assuan protocol as described by the aegypten project; see
 http://www.gnupg.org/aegypten/ for details.
+
+%description -l pl
+Jest to zestaw prostych kontrolek dialogowych do wpisywania PIN-ów lub
+hase³, u¿ywaj±ce protoko³u Assuan opisanego w projekcie aegypten;
+wiêcej szczegu³ów pod adresem http://www.gnupg.org/aegypten/.
 
 %prep
 %setup -q
