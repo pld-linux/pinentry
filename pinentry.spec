@@ -1,28 +1,28 @@
 #
 # Conditional build:
-# _without_gtk	- without GTK+ dialog
-# _without_qt	- without Qt dialog
+%bcond_without	gtk	# without GTK+ dialog
+%bcond_without	qt	# without Qt dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl):	Proste kontrolki dialogowe do wpisywania PIN-ów lub hase³
 Name:		pinentry
-Version:	0.6.9
-Release:	2
+Version:	0.7.0
+Release:	1
 License:	GPL
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/%{name}/%{name}-%{version}.tar.gz
-# Source0-md5:	28f5638fdec96b3429ad02ef08e997f5
+# Source0-md5:	50275634b3481a231f3319e062a0bd87
 Patch0:		%{name}-cxx.patch
 Patch1:		%{name}-system-assuan.patch
 URL:		http://www.gnupg.org/
-BuildRequires:	autoconf >= 2.52
-BuildRequires:	automake >= 1.5
-%{!?_without_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
+BuildRequires:	autoconf >= 2.57
+BuildRequires:	automake >= 1.7.6
+%{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 BuildRequires:	libassuan-devel >= 1:0.6.0
 BuildRequires:	libcap-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
-%{!?_without_qt:BuildRequires:	qt-devel}
+%{?with_qt:BuildRequires:	qt-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -65,21 +65,26 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla Qt.
 %patch1 -p1
 
 %build
-./autogen.sh
+%{__aclocal}
+%{__autoconf}
+%{__autoheader}
+%{__automake}
 CPPFLAGS="-I/usr/include/ncurses"
 %configure \
 	--enable-maintainer-mode \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
-	--%{?_without_gtk:dis}%{!?_without_gtk:en}able-pinentry-gtk \
-	--%{?_without_qt:dis}%{!?_without_qt:en}able-pinentry-qt
+	--%{!?with_gtk:dis}%{?with_gtk:en}able-pinentry-gtk \
+	--%{!?with_qt:dis}%{?with_qt:en}able-pinentry-qt \
+	--with-qt-includes=/usr/include/qt
 
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -96,10 +101,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pinentry-curses
 %{_infodir}/pinentry.info*
 
+%if %{with gtk}
 %files gtk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-gtk
+%endif
 
+%if %{with qt}
 %files qt
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-qt
+%endif
