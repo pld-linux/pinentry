@@ -6,14 +6,13 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl):	Proste kontrolki dialogowe do wpisywania PIN-ów lub hase³
 Name:		pinentry
-Version:	0.7.0
+Version:	0.7.1
 Release:	1
 License:	GPL
 Group:		Applications
-Source0:	ftp://ftp.gnupg.org/gcrypt/%{name}/%{name}-%{version}.tar.gz
-# Source0-md5:	50275634b3481a231f3319e062a0bd87
-Patch0:		%{name}-cxx.patch
-Patch1:		%{name}-system-assuan.patch
+Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
+# Source0-md5:	7861d63dea6434a5a05da84e83f209e6
+Patch0:		%{name}-system-assuan.patch
 URL:		http://www.gnupg.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake >= 1.7.6
@@ -62,7 +61,6 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla Qt.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %{__aclocal}
