@@ -56,6 +56,17 @@ Simple PIN or passphrase entry dialog for Qt.
 %description qt -l pl
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub hase³ dla Qt.
 
+%package -n libassuan-devel
+Summary:	Assuan protocol static library
+Summary(pl):	Statyczna biblioteka obs³uguj±ca protokó³ Assuan
+Group:		Development/Libraries
+
+%description -n libassuan-devel
+Assuan protocol static library.
+
+%description -n libassuan-devel -l pl
+Statyczna biblioteka obs³uguj±ca protokó³ Assuan.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -74,9 +85,11 @@ CPPFLAGS="-I/usr/include/ncurses"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
+
+install -d $RPM_BUILD_ROOT%{_libdir}
+install assuan/libassuan.a $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -100,3 +113,7 @@ rm -rf $RPM_BUILD_ROOT
 %files qt
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-qt
+
+%files -n libassuan-devel
+%defattr(644,root,root,755)
+%{_libdir}/libassuan.a
