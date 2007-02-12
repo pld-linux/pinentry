@@ -5,7 +5,7 @@
 %bcond_without	qt	# without Qt dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
-Summary(pl):	Proste kontrolki dialogowe do wpisywania PIN-Ûw lub hase≥
+Summary(pl.UTF-8):   Proste kontrolki dialogowe do wpisywania PIN-√≥w lub hase≈Ç
 Name:		pinentry
 %define		_snap		20061028
 Version:	0.7.2
@@ -37,45 +37,45 @@ utilize the Assuan protocol as described by the aegypten project; see
 http://www.gnupg.org/aegypten/ for details. Base package contains
 curses-based dialog.
 
-%description -l pl
-Jest to zestaw prostych kontrolek dialogowych do wpisywania PIN-Ûw lub
-hase≥, uøywaj±ce protoko≥u Assuan opisanego w projekcie aegypten;
-wiÍcej szczegÛ≥Ûw pod adresem http://www.gnupg.org/aegypten/.
-Podstawowy pakiet zawiera kontrolkÍ opart± na curses.
+%description -l pl.UTF-8
+Jest to zestaw prostych kontrolek dialogowych do wpisywania PIN-√≥w lub
+hase≈Ç, u≈ºywajƒÖce protoko≈Çu Assuan opisanego w projekcie aegypten;
+wiƒôcej szczeg√≥≈Ç√≥w pod adresem http://www.gnupg.org/aegypten/.
+Podstawowy pakiet zawiera kontrolkƒô opartƒÖ na curses.
 
 %package gtk
 Summary:	Simple PIN or passphrase entry dialog for GTK+ 1.x
-Summary(pl):	Prosta kontrolka dialogowa do wpisywania PIN-Ûw lub hase≥ dla GTK+ 1.x
+Summary(pl.UTF-8):   Prosta kontrolka dialogowa do wpisywania PIN-√≥w lub hase≈Ç dla GTK+ 1.x
 Group:		X11/Applications
 
 %description gtk
 Simple PIN or passphrase entry dialog for GTK+ 1.x.
 
-%description gtk -l pl
-Prosta kontrolka dialogowa do wpisywania PIN-Ûw lub hase≥ dla GTK+ 1.x.
+%description gtk -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-√≥w lub hase≈Ç dla GTK+ 1.x.
 
 %package gtk2
 Summary:	Simple PIN or passphrase entry dialog for GTK+ 2
-Summary(pl):	Prosta kontrolka dialogowa do wpisywania PIN-Ûw lub hase≥ dla GTK+ 2
+Summary(pl.UTF-8):   Prosta kontrolka dialogowa do wpisywania PIN-√≥w lub hase≈Ç dla GTK+ 2
 Group:		X11/Applications
 Requires:	gtk+2 >= 2:2.4.0
 
 %description gtk2
 Simple PIN or passphrase entry dialog for GTK+ 2.
 
-%description gtk2 -l pl
-Prosta kontrolka dialogowa do wpisywania PIN-Ûw lub hase≥ dla GTK+ 2.
+%description gtk2 -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-√≥w lub hase≈Ç dla GTK+ 2.
 
 %package qt
 Summary:	Simple PIN or passphrase entry dialog for Qt
-Summary(pl):	Prosta kontrolka dialogowa do wpisywania PIN-Ûw lub hase≥ dla Qt
+Summary(pl.UTF-8):   Prosta kontrolka dialogowa do wpisywania PIN-√≥w lub hase≈Ç dla Qt
 Group:		X11/Applications
 
 %description qt
 Simple PIN or passphrase entry dialog for Qt.
 
-%description qt -l pl
-Prosta kontrolka dialogowa do wpisywania PIN-Ûw lub hase≥ dla Qt.
+%description qt -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-√≥w lub hase≈Ç dla Qt.
 
 %prep
 %setup -q -n %{name}-%{_snap}
