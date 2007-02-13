@@ -5,7 +5,7 @@
 %bcond_without	qt	# without Qt dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
-Summary(pl.UTF-8):   Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
+Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
 %define		_snap		20061028
 Version:	0.7.2
@@ -45,7 +45,7 @@ Podstawowy pakiet zawiera kontrolkę opartą na curses.
 
 %package gtk
 Summary:	Simple PIN or passphrase entry dialog for GTK+ 1.x
-Summary(pl.UTF-8):   Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 1.x
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 1.x
 Group:		X11/Applications
 
 %description gtk
@@ -56,7 +56,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 1.x.
 
 %package gtk2
 Summary:	Simple PIN or passphrase entry dialog for GTK+ 2
-Summary(pl.UTF-8):   Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2
 Group:		X11/Applications
 Requires:	gtk+2 >= 2:2.4.0
 
@@ -68,7 +68,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2.
 
 %package qt
 Summary:	Simple PIN or passphrase entry dialog for Qt
-Summary(pl.UTF-8):   Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt
 Group:		X11/Applications
 
 %description qt
