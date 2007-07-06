@@ -7,14 +7,12 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-%define		_snap		20061028
-Version:	0.7.2
-Release:	1.%{_snap}
-License:	GPL
+Version:	0.7.3
+Release:	1
+License:	GPL v2+
 Group:		Applications
-#Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
-Source0:	%{name}-%{_snap}.tar.gz
-# Source0-md5:	f30d6d3790add93d2a49390512c3ea56
+Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
+# Source0-md5:	59282278405a8264b39ea28678c78cf4
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
 URL:		http://www.gnupg.org/
@@ -78,7 +76,7 @@ Simple PIN or passphrase entry dialog for Qt.
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt.
 
 %prep
-%setup -q -n %{name}-%{_snap}
+%setup -q
 %patch0 -p1
 %patch1 -p1
 
