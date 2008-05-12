@@ -1,0 +1,43 @@
+--- pinentry-0.7.5/gtk+-2/gtksecentry.c.orig	2007-11-19 12:20:50.000000000 +0100
++++ pinentry-0.7.5/gtk+-2/gtksecentry.c	2008-05-12 20:50:27.578544279 +0200
+@@ -270,7 +270,7 @@
+ 
+ 
+ gpointer
+-g_malloc(gulong size)
++g_malloc(gsize size)
+ {
+     gpointer p;
+ 
+@@ -282,13 +282,13 @@
+     else
+ 	p = (gpointer) malloc(size);
+     if (!p)
+-	g_error("could not allocate %ld bytes", size);
++	g_error("could not allocate %zd bytes", size);
+ 
+     return p;
+ }
+ 
+ gpointer
+-g_malloc0(gulong size)
++g_malloc0(gsize size)
+ {
+     gpointer p;
+ 
+@@ -302,13 +302,13 @@
+     } else
+ 	p = (gpointer) calloc(size, 1);
+     if (!p)
+-	g_error("could not allocate %ld bytes", size);
++	g_error("could not allocate %zd bytes", size);
+ 
+     return p;
+ }
+ 
+ gpointer
+-g_realloc(gpointer mem, gulong size)
++g_realloc(gpointer mem, gsize size)
+ {
+     gpointer p;
+ 
