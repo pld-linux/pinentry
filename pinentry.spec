@@ -1,3 +1,4 @@
+# TODO: make /usr/bin/pinentry symlink to pinentry-* binary selectable in some way
 #
 # Conditional build:
 %bcond_without	gtk	# without GTK+ 1.x dialog
@@ -7,14 +8,15 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.7.4
-Release:	2
+Version:	0.7.5
+Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
-# Source0-md5:	d7709fe7c48a24c34c5948725cef7d93
+# Source0-md5:	ca492afbbb59cd19f1c875533f18b269
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
+Patch2:		%{name}-types.patch
 URL:		http://www.gnupg.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake >= 1:1.7.6
@@ -79,6 +81,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__aclocal} -I m4
@@ -106,10 +109,10 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	-p	/sbin/postshell
+%post	-p /sbin/postshell
 -/usr/sbin/fix-info-dir -c %{_infodir}
 
-%postun	-p	/sbin/postshell
+%postun	-p /sbin/postshell
 -/usr/sbin/fix-info-dir -c %{_infodir}
 
 %files
