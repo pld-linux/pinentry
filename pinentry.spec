@@ -109,7 +109,9 @@ rm -f $RPM_BUILD_ROOT%{_bindir}/pinentry
 cat >$RPM_BUILD_ROOT%{_bindir}/pinentry <<'EOF'
 #!/bin/sh
 
-if [ -z "$DISPLAY" ]; then
+if [ -n "$PINENTRY_PROGRAM" ]; then
+	exec $PINENTRY_PROGRAM "$@"
+elif [ -z "$DISPLAY" ]; then
 	exec %{_bindir}/pinentry-curses "$@"
 elif [ -x %{_bindir}/pinentry-gtk-2 ]; then
 	exec %{_bindir}/pinentry-gtk-2 "$@"
