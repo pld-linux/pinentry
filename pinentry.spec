@@ -1,4 +1,3 @@
-# TODO: make /usr/bin/pinentry symlink to pinentry-* binary selectable in some way
 #
 # Conditional build:
 %bcond_without	gtk	# without GTK+ 1.x dialog
@@ -106,6 +105,22 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+rm -f $RPM_BUILD_ROOT%{_bindir}/pinentry
+cat >$RPM_BUILD_ROOT%{_bindir}/pinentry <<'EOF'
+#!/bin/sh
+
+if [ -z "$DISPLAY" ]; then
+	exec %{_bindir}/pinentry-curses "$@"
+elif [ -x %{_bindir}/pinentry-gtk-2 ]; then
+	exec %{_bindir}/pinentry-gtk-2 "$@"
+elif [ -x %{_bindir}/pinentry-gtk ]; then
+	exec %{_bindir}/pinentry-gtk "$@"
+elif [ -x %{_bindir}/pinentry-qt ]; then
+	exec %{_bindir}/pinentry-qt "$@"
+else
+	exec %{_bindir}/pinentry-curses "$@"
+EOF
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -118,6 +133,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README THANKS TODO
+%attr(755,root,root) %{_bindir}/pinentry
 %attr(755,root,root) %{_bindir}/pinentry-curses
 %{_infodir}/pinentry.info*
 
