@@ -8,7 +8,7 @@ Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
 Version:	0.7.5
-Release:	2
+Release:	3
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
@@ -121,6 +121,7 @@ elif [ -x %{_bindir}/pinentry-qt ]; then
 	exec %{_bindir}/pinentry-qt "$@"
 else
 	exec %{_bindir}/pinentry-curses "$@"
+fi
 EOF
 
 %clean
