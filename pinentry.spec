@@ -3,20 +3,21 @@
 %bcond_without	gtk	# without GTK+ 1.x dialog
 %bcond_without	gtk2	# without GTK+ 2 dialog
 %bcond_without	qt	# without Qt dialog
+%bcond_without	qt4	# without Qt4 dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.7.5
-Release:	4
+Version:	0.7.6
+Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
-# Source0-md5:	ca492afbbb59cd19f1c875533f18b269
+# Source0-md5:	5a4f676375fa882009da02013d77210f
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
-Patch2:		%{name}-types.patch
 URL:		http://www.gnupg.org/
+BuildRequires:	QtGui-devel
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake >= 1:1.7.6
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
@@ -76,11 +77,28 @@ Simple PIN or passphrase entry dialog for Qt.
 %description qt -l pl.UTF-8
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt.
 
+%package qt4
+Summary:	Simple PIN or passphrase entry dialog for Qt4
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4
+Group:		X11/Applications
+
+%description qt4
+Simple PIN or passphrase entry dialog for Qt4.
+
+%description qt4 -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
+
 %prep
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+
+cd qt4
+%{_bindir}/moc-qt4 pinentrydialog.h  -o pinentrydialog.moc
+%{_bindir}/moc-qt4 qsecurelineedit.h -o qsecurelineedit.moc
+cd ..
+
+rm assuan/*.h
 
 %build
 %{__aclocal} -I m4
@@ -95,6 +113,7 @@ CPPFLAGS="-I/usr/include/ncurses"
 	--%{!?with_gtk:dis}%{?with_gtk:en}able-pinentry-gtk \
 	--%{!?with_gtk2:dis}%{?with_gtk2:en}able-pinentry-gtk2 \
 	--%{!?with_qt:dis}%{?with_qt:en}able-pinentry-qt \
+	--%{!?with_qt4:dis}%{?with_qt4:en}able-pinentry-qt4 \
 	--with-qt-includes=/usr/include/qt
 
 %{__make}
@@ -158,4 +177,10 @@ rm -rf $RPM_BUILD_ROOT
 %files qt
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-qt
+%endif
+
+%if %{with qt4}
+%files qt4
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pinentry-qt4
 %endif
