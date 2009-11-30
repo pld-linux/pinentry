@@ -17,9 +17,10 @@ Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
 URL:		http://www.gnupg.org/
-BuildRequires:	QtGui-devel
+%{?with_qt4:BuildRequires:	QtGui-devel}
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake >= 1:1.7.6
+BuildRequires:	gettext-devel
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
 BuildRequires:	libassuan-devel >= 1:0.6.0
@@ -28,6 +29,7 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
 %{?with_qt:BuildRequires:	qt-devel}
+%{?with_qt4:BuildRequires:	qt4-build}
 BuildRequires:	texinfo
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -93,10 +95,12 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 %patch0 -p1
 %patch1 -p1
 
+%if %{with qt4}
 cd qt4
 %{_bindir}/moc-qt4 pinentrydialog.h  -o pinentrydialog.moc
 %{_bindir}/moc-qt4 qsecurelineedit.h -o qsecurelineedit.moc
 cd ..
+%endif
 
 rm assuan/*.h
 
@@ -114,7 +118,7 @@ CPPFLAGS="-I/usr/include/ncurses"
 	--%{!?with_gtk2:dis}%{?with_gtk2:en}able-pinentry-gtk2 \
 	--%{!?with_qt:dis}%{?with_qt:en}able-pinentry-qt \
 	--%{!?with_qt4:dis}%{?with_qt4:en}able-pinentry-qt4 \
-	--with-qt-includes=/usr/include/qt
+	--with-qt-includes=%{_includedir}/qt
 
 %{__make}
 
