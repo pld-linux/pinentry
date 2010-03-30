@@ -16,7 +16,7 @@
  AM_CPPFLAGS = $(NCURSES_INCLUDE) -I$(top_srcdir)/pinentry
  LDADD = ../pinentry/libpinentry.a ../pinentry/libpinentry-curses.a \
 -	../assuan/libassuan.a ../secmem/libsecmem.a \
-+	-lassuan ../secmem/libsecmem.a \
++	-lassuan1 ../secmem/libsecmem.a \
  	$(LIBCAP) $(LIBCURSES) $(LIBICONV)
  
  pinentry_curses_SOURCES = pinentry-curses.c
@@ -27,7 +27,7 @@
  AM_CPPFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(ncurses_include) \
  	-I$(top_srcdir)/secmem -I$(top_srcdir)/pinentry
 -LDADD = ../pinentry/libpinentry.a ../assuan/libassuan.a ../secmem/libsecmem.a \
-+LDADD = ../pinentry/libpinentry.a -lassuan ../secmem/libsecmem.a \
++LDADD = ../pinentry/libpinentry.a -lassuan1 ../secmem/libsecmem.a \
  	$(LIBCAP) $(GTK_LIBS) $(libcurses)
  
  pinentry_gtk_SOURCES = pinentry-gtk.c \
@@ -43,7 +43,7 @@
  AM_CXXFLAGS = $(QT_CXXFLAGS)
  pinentry_qt_LDADD = $(QT_LIBS) $(libcurses) ../pinentry/libpinentry.a \
 -	$(top_builddir)/assuan/libassuan.a \
-+	-lassuan \
++	-lassuan1 \
  	$(top_builddir)/secmem/libsecmem.a $(LIBCAP)
  pinentry_qt_LDFLAGS = $(QT_LDFLAGS) $(QT_RPATH)
  
@@ -84,7 +84,7 @@
  AM_CPPFLAGS = $(GTK2CFLAGS) $(ncurses_include) \
  	-I$(top_srcdir)/secmem -I$(top_srcdir)/pinentry
 -LDADD = ../pinentry/libpinentry.a ../assuan/libassuan.a ../secmem/libsecmem.a \
-+LDADD = ../pinentry/libpinentry.a -lassuan ../secmem/libsecmem.a \
++LDADD = ../pinentry/libpinentry.a -lassuan1 ../secmem/libsecmem.a \
  	$(LIBCAP) $(GTK2LIBS) $(libcurses)
  
  pinentry_gtk_2_SOURCES = pinentry-gtk-2.c \
@@ -100,7 +100,7 @@
  AM_CXXFLAGS = $(QT4_CORE_CFLAGS) $(QT4_GUI_CFLAGS)
  pinentry_qt4_LDADD = $(QT4_CORE_LIBS) $(QT4_GUI_LIBS) $(libcurses) \
 -	../pinentry/libpinentry.a $(top_builddir)/assuan/libassuan.a \
-+	../pinentry/libpinentry.a -lassuan \
++	../pinentry/libpinentry.a -lassuan1 \
  	$(top_builddir)/secmem/libsecmem.a $(LIBCAP)
  
  pinentry_qt4_SOURCES = pinentrydialog.h pinentrydialog.cpp \
