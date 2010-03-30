@@ -9,7 +9,7 @@ Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
 Version:	0.7.6
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
@@ -23,7 +23,7 @@ BuildRequires:	automake >= 1:1.7.6
 BuildRequires:	gettext-devel
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
-BuildRequires:	libassuan-devel >= 1:0.6.0
+BuildRequires:	libassuan1-devel >= 1.0.5-2
 BuildRequires:	libcap-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
