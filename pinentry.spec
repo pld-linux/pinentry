@@ -1,3 +1,4 @@
+# TODO: use system libassuan 2 instead of included libassuan 1
 #
 # Conditional build:
 %bcond_without	gtk	# without GTK+ 1.x dialog
@@ -8,12 +9,12 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.8.0
+Version:	0.8.1
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
-# Source0-md5:	590be1b00f9ab63205843c7fed8caf35
+# Source0-md5:	81f99904daee5331eb6738408bb024b6
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
 URL:		http://www.gnupg.org/
@@ -23,7 +24,7 @@ BuildRequires:	automake >= 1:1.7.6
 BuildRequires:	gettext-devel
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
-BuildRequires:	libassuan1-devel >= 1.0.5-2
+#BuildRequires:	libassuan-devel
 BuildRequires:	libcap-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
@@ -92,7 +93,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 
 %prep
 %setup -q
-%patch0 -p1
+#patch0 -p1
 %patch1 -p1
 
 %if %{with qt4}
@@ -102,7 +103,7 @@ cd qt4
 cd ..
 %endif
 
-rm assuan/*.h
+#rm assuan/*.h
 
 %build
 %{__aclocal} -I m4
