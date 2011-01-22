@@ -55,7 +55,8 @@ Group:		X11/Applications
 Simple PIN or passphrase entry dialog for GTK+ 1.x.
 
 %description gtk -l pl.UTF-8
-Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 1.x.
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+
+1.x.
 
 %package gtk2
 Summary:	Simple PIN or passphrase entry dialog for GTK+ 2
@@ -110,8 +111,9 @@ cd ..
 %{__autoconf}
 %{__autoheader}
 %{__automake}
-CPPFLAGS="-I/usr/include/ncurses"
+CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 %configure \
+	LIBS="-ltinfo" \
 	--enable-maintainer-mode \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
