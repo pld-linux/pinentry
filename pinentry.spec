@@ -115,7 +115,6 @@ cd ..
 %{__automake}
 CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 %configure \
-	LIBS="-ltinfo" \
 	--enable-maintainer-mode \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
