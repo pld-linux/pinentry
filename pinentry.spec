@@ -9,19 +9,19 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.8.1
-Release:	3
+Version:	0.8.2
+Release:	1
 License:	GPL v2+
 Group:		Applications
-Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.gz
-# Source0-md5:	81f99904daee5331eb6738408bb024b6
+Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
+# Source0-md5:	82e6114e5e27a8ab36f314b332a6e024
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
 Patch2:		0001-Fix-qt4-pinentry-window-created-in-the-background.patch
 URL:		http://www.gnupg.org/
 %{?with_qt4:BuildRequires:	QtGui-devel}
 BuildRequires:	autoconf >= 2.57
-BuildRequires:	automake >= 1:1.7.6
+BuildRequires:	automake >= 1:1.10
 BuildRequires:	gettext-devel
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
@@ -106,7 +106,7 @@ cd qt4
 cd ..
 %endif
 
-#rm assuan/*.h
+#%{__rm} assuan/*.h
 
 %build
 %{__aclocal} -I m4
@@ -118,10 +118,10 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 	--enable-maintainer-mode \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
-	--%{!?with_gtk:dis}%{?with_gtk:en}able-pinentry-gtk \
-	--%{!?with_gtk2:dis}%{?with_gtk2:en}able-pinentry-gtk2 \
-	--%{!?with_qt:dis}%{?with_qt:en}able-pinentry-qt \
-	--%{!?with_qt4:dis}%{?with_qt4:en}able-pinentry-qt4 \
+	--enable-pinentry-gtk%{!?with_gtk:=no} \
+	--enable-pinentry-gtk2%{!?with_gtk2:=no} \
+	--enable-pinentry-qt%{!?with_qt:=no} \
+	--enable-pinentry-qt4%{!?with_qt4:=no} \
 	--with-qt-includes=%{_includedir}/qt
 
 %{__make}
@@ -132,7 +132,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-rm -f $RPM_BUILD_ROOT%{_bindir}/pinentry
+%{__rm} $RPM_BUILD_ROOT%{_bindir}/pinentry
 cat >$RPM_BUILD_ROOT%{_bindir}/pinentry <<'EOF'
 #!/bin/sh
 
