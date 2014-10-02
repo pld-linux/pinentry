@@ -127,6 +127,7 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 	--enable-pinentry-gtk2%{!?with_gtk2:=no} \
 	--enable-pinentry-qt%{!?with_qt:=no} \
 	--enable-pinentry-qt4%{!?with_qt4:=no} \
+	--enable-pinentry-tty \
 	--with-qt-includes=%{_includedir}/qt
 
 %{__make}
@@ -172,6 +173,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS ChangeLog NEWS README THANKS TODO
 %attr(755,root,root) %{_bindir}/pinentry
 %attr(755,root,root) %{_bindir}/pinentry-curses
+%attr(755,root,root) %{_bindir}/pinentry-tty
 %{_infodir}/pinentry.info*
 
 %if %{with gtk}
