@@ -1,20 +1,18 @@
 # TODO: use system libassuan 2 instead of included libassuan 1
 #
 # Conditional build:
-%bcond_without	gtk	# without GTK+ 1.x dialog
 %bcond_without	gtk2	# without GTK+ 2 dialog
-%bcond_without	qt	# without Qt dialog
 %bcond_without	qt4	# without Qt4 dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.8.4
-Release:	2
+Version:	0.9.0
+Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	e2b6f94471ba1e978f6e5bf6b275189b
+# Source0-md5:	40a05856cb3accf6679987b7899b0f5a
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
 Patch2:		%{name}-am.patch
@@ -25,14 +23,12 @@ URL:		http://www.gnupg.org/
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake >= 1:1.10
 BuildRequires:	gettext-devel
-%{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
 #BuildRequires:	libassuan-devel
 BuildRequires:	libcap-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
-%{?with_qt:BuildRequires:	qt-devel}
 %{?with_qt4:BuildRequires:	qt4-build}
 BuildRequires:	texinfo
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -49,18 +45,6 @@ haseł, używające protokołu Assuan opisanego w projekcie aegypten;
 więcej szczegółów pod adresem http://www.gnupg.org/aegypten/.
 Podstawowy pakiet zawiera kontrolkę opartą na curses.
 
-%package gtk
-Summary:	Simple PIN or passphrase entry dialog for GTK+ 1.x
-Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 1.x
-Group:		X11/Applications
-
-%description gtk
-Simple PIN or passphrase entry dialog for GTK+ 1.x.
-
-%description gtk -l pl.UTF-8
-Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+
-1.x.
-
 %package gtk2
 Summary:	Simple PIN or passphrase entry dialog for GTK+ 2
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2
@@ -72,17 +56,6 @@ Simple PIN or passphrase entry dialog for GTK+ 2.
 
 %description gtk2 -l pl.UTF-8
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2.
-
-%package qt
-Summary:	Simple PIN or passphrase entry dialog for Qt
-Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt
-Group:		X11/Applications
-
-%description qt
-Simple PIN or passphrase entry dialog for Qt.
-
-%description qt -l pl.UTF-8
-Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt.
 
 %package qt4
 Summary:	Simple PIN or passphrase entry dialog for Qt4
@@ -123,12 +96,9 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 	--enable-maintainer-mode \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
-	--enable-pinentry-gtk%{!?with_gtk:=no} \
 	--enable-pinentry-gtk2%{!?with_gtk2:=no} \
-	--enable-pinentry-qt%{!?with_qt:=no} \
 	--enable-pinentry-qt4%{!?with_qt4:=no} \
-	--enable-pinentry-tty \
-	--with-qt-includes=%{_includedir}/qt
+	--enable-pinentry-tty
 
 %{__make}
 
@@ -176,22 +146,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pinentry-tty
 %{_infodir}/pinentry.info*
 
-%if %{with gtk}
-%files gtk
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/pinentry-gtk
-%endif
-
 %if %{with gtk2}
 %files gtk2
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-gtk-2
-%endif
-
-%if %{with qt}
-%files qt
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/pinentry-qt
 %endif
 
 %if %{with qt4}
