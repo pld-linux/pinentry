@@ -22,7 +22,7 @@ URL:		http://www.gnupg.org/
 %{?with_qt4:BuildRequires:	QtGui-devel}
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake >= 1:1.10
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
 #BuildRequires:	libassuan-devel
 BuildRequires:	libcap-devel
