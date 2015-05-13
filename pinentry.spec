@@ -7,16 +7,17 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.9.1
+Version:	0.9.2
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	d224d031130aedb44b05164cb04ed88b
+# Source0-md5:	f51d454f921111b5156a2291cbf70278
 Patch0:		%{name}-system-assuan.patch
 Patch1:		%{name}-info.patch
 Patch2:		%{name}-am.patch
 Patch3:		%{name}-activate.patch
+Patch4:		%{name}-link.patch
 URL:		http://www.gnupg.org/
 %{?with_qt4:BuildRequires:	QtCore-devel >= 4}
 %{?with_qt4:BuildRequires:	QtGui-devel >= 4}
@@ -26,6 +27,7 @@ BuildRequires:	gettext-tools
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
 #BuildRequires:	libassuan-devel
 BuildRequires:	libcap-devel
+BuildRequires:	libsecret-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
@@ -74,6 +76,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %if %{with qt4}
 cd qt4

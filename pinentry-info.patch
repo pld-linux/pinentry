@@ -1,14 +1,14 @@
---- pinentry-0.7.4/doc/pinentry.texi.orig	2007-11-28 23:57:55.000000000 +0100
-+++ pinentry-0.7.4/doc/pinentry.texi	2007-12-03 20:51:04.615772218 +0100
-@@ -60,9 +60,9 @@
+--- pinentry-0.9.2/doc/pinentry.texi.orig	2015-05-13 20:28:31.331690553 +0200
++++ pinentry-0.9.2/doc/pinentry.texi	2015-05-13 20:40:01.474994923 +0200
+@@ -54,9 +54,9 @@
  @c %**end of header
  
  @ifnottex
 -@dircategory GNU Utilities
 +@dircategory Miscellaneous:
  @direntry
--* pinentry: (pinentry).    Ask securely for a passphrase or PIN.
-+* pinentry: (pinentry).			Ask securely for a passphrase or PIN
+-* pinentry: (pinentry).    Securely ask for a passphrase or PIN.
++* pinentry: (pinentry).			Securely ask for a passphrase or PIN
  @end direntry
  This file documents the use and the internals of the @pinentry{}.
  

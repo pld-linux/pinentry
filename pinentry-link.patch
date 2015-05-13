@@ -1,0 +1,56 @@
+--- pinentry-0.9.2/curses/Makefile.am.orig	2015-05-11 12:23:06.000000000 +0200
++++ pinentry-0.9.2/curses/Makefile.am	2015-05-13 21:10:26.984918315 +0200
+@@ -22,9 +22,9 @@
+ bin_PROGRAMS = pinentry-curses
+ 
+ AM_CPPFLAGS = $(COMMON_CFLAGS) $(NCURSES_INCLUDE) -I$(top_srcdir)/pinentry
+-LDADD = $(COMMON_LIBS) \
++LDADD = \
+ 	../pinentry/libpinentry.a ../pinentry/libpinentry-curses.a \
+ 	../assuan/libassuan.a ../secmem/libsecmem.a \
+-	$(LIBCAP) $(LIBCURSES) $(LIBICONV)
++	$(COMMON_LIBS) $(LIBCAP) $(LIBCURSES) $(LIBICONV)
+ 
+ pinentry_curses_SOURCES = pinentry-curses.c
+--- pinentry-0.9.2/tty/Makefile.am.orig	2015-05-11 12:23:06.000000000 +0200
++++ pinentry-0.9.2/tty/Makefile.am	2015-05-13 21:17:33.518233748 +0200
+@@ -21,8 +21,8 @@
+ bin_PROGRAMS = pinentry-tty
+ 
+ AM_CPPFLAGS = $(COMMON_CFLAGS) -I$(top_srcdir)/pinentry
+-LDADD = $(COMMON_LIBS) ../pinentry/libpinentry.a \
++LDADD = ../pinentry/libpinentry.a \
+ 	../assuan/libassuan.a ../secmem/libsecmem.a \
+-	$(LIBCAP) $(LIBICONV)
++	$(COMMON_LIBS) $(LIBCAP) $(LIBICONV)
+ 
+ pinentry_tty_SOURCES = pinentry-tty.c
+--- pinentry-0.9.2/gtk+-2/Makefile.am.orig	2015-05-11 12:23:06.000000000 +0200
++++ pinentry-0.9.2/gtk+-2/Makefile.am	2015-05-13 21:27:19.931542471 +0200
+@@ -31,9 +31,9 @@
+ 
+ AM_CPPFLAGS = $(COMMON_CFLAGS) $(GTK2CFLAGS) $(ncurses_include) \
+ 	-I$(top_srcdir)/secmem -I$(top_srcdir)/pinentry
+-LDADD = $(COMMON_LIBS) \
++LDADD = \
+ 	../pinentry/libpinentry.a ../assuan/libassuan.a ../secmem/libsecmem.a \
+-	$(LIBCAP) $(GTK2LIBS) $(libcurses)
++	$(COMMON_LIBS) $(LIBCAP) $(GTK2LIBS) $(libcurses)
+ 
+ pinentry_gtk_2_SOURCES = pinentry-gtk-2.c \
+ 	gtksecentry.c gtksecentry.h gseal-gtk-compat.h
+--- pinentry-0.9.2/qt4/Makefile.am.orig	2015-05-11 12:23:06.000000000 +0200
++++ pinentry-0.9.2/qt4/Makefile.am	2015-05-13 21:35:32.554855131 +0200
+@@ -38,10 +38,10 @@
+ 	-I$(top_srcdir) -I$(top_srcdir)/assuan -I$(top_srcdir)/secmem \
+ 	$(ncurses_include) -I$(top_srcdir)/pinentry
+ AM_CXXFLAGS = $(QT4_CORE_CFLAGS) $(QT4_GUI_CFLAGS)
+-pinentry_qt4_LDADD = $(COMMON_LIBS) \
++pinentry_qt4_LDADD = \
+ 	$(QT4_CORE_LIBS) $(QT4_GUI_LIBS) $(libcurses) \
+ 	../pinentry/libpinentry.a $(top_builddir)/assuan/libassuan.a \
+-	$(top_builddir)/secmem/libsecmem.a $(LIBCAP)
++	$(top_builddir)/secmem/libsecmem.a $(COMMON_LIBS) $(LIBCAP)
+ 
+ BUILT_SOURCES = \
+ 	pinentryconfirm.moc qsecurelineedit.moc pinentrydialog.moc
