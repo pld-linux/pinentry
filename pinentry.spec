@@ -1,4 +1,3 @@
-# TODO: use system libassuan 2 instead of included libassuan 1
 #
 # Conditional build:
 %bcond_without	gtk2	# without GTK+ 2 dialog
@@ -8,15 +7,14 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.9.4
+Version:	0.9.5
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	50dd255d23839079e15a02761f11d4c8
-Patch0:		%{name}-system-assuan.patch
-Patch1:		%{name}-info.patch
-Patch2:		%{name}-am.patch
+# Source0-md5:	55439c4436b59573a29e144916ee5b61
+Patch0:		%{name}-info.patch
+Patch1:		%{name}-am.patch
 URL:		http://www.gnupg.org/
 %{?with_qt4:BuildRequires:	QtCore-devel >= 4}
 %{?with_qt4:BuildRequires:	QtGui-devel >= 4}
@@ -26,14 +24,17 @@ BuildRequires:	gettext-tools
 %{?with_gnome3:BuildRequires:	gcr-devel >= 3}
 %{?with_gnome3:BuildRequires:	gcr-ui-devel >= 3}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
-#BuildRequires:	libassuan-devel
+BuildRequires:	libassuan-devel >= 1:2.1.0
 BuildRequires:	libcap-devel
+BuildRequires:	libgpg-error-devel >= 1.16
 BuildRequires:	libsecret-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
 %{?with_qt4:BuildRequires:	qt4-build}
 BuildRequires:	texinfo
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -48,11 +49,27 @@ haseł, używające protokołu Assuan opisanego w projekcie aegypten;
 więcej szczegółów pod adresem http://www.gnupg.org/aegypten/.
 Podstawowy pakiet zawiera kontrolkę opartą na curses.
 
+%package emacs
+Summary:	Simple PIN or passphrase entry dialog for Emacs
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Emacsa
+Group:		Applications
+Requires:	emacs
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
+
+%description emacs
+Simple PIN or passphrase entry dialog for Emacs.
+
+%description emacs -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Emacsa.
+
 %package gnome3
 Summary:	Simple PIN or passphrase entry dialog for GNOME 3
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GNOME 3
 Group:		X11/Applications
 Requires:	gtk+2 >= 2:2.4.0
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
 
 %description gnome3
 Simple PIN or passphrase entry dialog for GNOME 3.
@@ -65,6 +82,8 @@ Summary:	Simple PIN or passphrase entry dialog for GTK+ 2
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2
 Group:		X11/Applications
 Requires:	gtk+2 >= 2:2.4.0
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
 
 %description gtk2
 Simple PIN or passphrase entry dialog for GTK+ 2.
@@ -76,6 +95,8 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2.
 Summary:	Simple PIN or passphrase entry dialog for Qt4
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4
 Group:		X11/Applications
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
 
 %description qt4
 Simple PIN or passphrase entry dialog for Qt4.
@@ -85,9 +106,8 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 
 %prep
 %setup -q
-#patch0 -p1
+%patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %if %{with qt4}
 cd qt4
@@ -159,6 +179,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pinentry-curses
 %attr(755,root,root) %{_bindir}/pinentry-tty
 %{_infodir}/pinentry.info*
+
+%files emacs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pinentry-emacs
 
 %if %{with gnome3}
 %files gnome3
