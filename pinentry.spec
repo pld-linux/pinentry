@@ -1,21 +1,25 @@
 #
 # Conditional build:
-%bcond_without	gtk2	# without GTK+ 2 dialog
-%bcond_without	gnome3	# without GNOME 3 dialog
-%bcond_without	qt4	# without Qt4 dialog
+%bcond_without	gtk2	# GTK+ 2 dialog
+%bcond_without	gnome3	# GNOME 3 dialog
+%bcond_without	qt4	# Qt4 dialog
+%bcond_without	qt5	# Qt5 dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	0.9.5
+Version:	0.9.6
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	55439c4436b59573a29e144916ee5b61
+# Source0-md5:	ab27ee5f9c3079842a9becd7ef7605cc
 Patch0:		%{name}-info.patch
 Patch1:		%{name}-am.patch
 URL:		http://www.gnupg.org/
+%{?with_qt5:BuildRequires:	Qt5Core-devel >= 5}
+%{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5}
+%{?with_qt5:BuildRequires:	Qt5Widgets-devel >= 5}
 %{?with_qt4:BuildRequires:	QtCore-devel >= 4}
 %{?with_qt4:BuildRequires:	QtGui-devel >= 4}
 BuildRequires:	autoconf >= 2.69
@@ -32,6 +36,7 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
 %{?with_qt4:BuildRequires:	qt4-build}
+%{?with_qt5:BuildRequires:	qt5-build}
 BuildRequires:	texinfo
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
@@ -104,12 +109,25 @@ Simple PIN or passphrase entry dialog for Qt4.
 %description qt4 -l pl.UTF-8
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 
+%package qt5
+Summary:	Simple PIN or passphrase entry dialog for Qt5
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5
+Group:		X11/Applications
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
+
+%description qt5
+Simple PIN or passphrase entry dialog for Qt5.
+
+%description qt5 -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5.
+
 %prep
 %setup -q
 %patch0 -p1
 %patch1 -p1
 
-%if %{with qt4}
+%if 0
 cd qt4
 %{_bindir}/moc-qt4 pinentrydialog.h  -o pinentrydialog.moc
 %{_bindir}/moc-qt4 pinentryconfirm.h -o pinentryconfirm.moc
@@ -117,30 +135,63 @@ cd qt4
 cd ..
 %endif
 
-#%{__rm} assuan/*.h
-
 %build
 %{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
 CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
-%configure \
+
+mkdir build
+cd build
+../%configure \
 	--enable-maintainer-mode \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
+	--enable-pinentry-emacs \
 	--enable-pinentry-gnome3%{!?with_gnome3:=no} \
 	--enable-pinentry-gtk2%{!?with_gtk2:=no} \
-	--enable-pinentry-qt4%{!?with_qt4:=no} \
+	--enable-pinentry-qt%{!?with_qt5:=no} \
 	--enable-pinentry-tty
 
 %{__make}
+cd ..
+
+%if %{with qt4}
+install -d build-qt4
+# hack: avoid qt5 detection so configure fallbacks to qt4
+%{__mv} configure configure.orig
+%{__sed} -e 's/Qt5Core/Qt999Core/' configure.orig > configure
+chmod +x configure
+cd build-qt4
+../%configure \
+	--enable-maintainer-mode \
+	--enable-fallback-curses \
+	--disable-pinentry-curses \
+	--disable-pinentry-emacs \
+	--disable-pinentry-gnome3 \
+	--disable-pinentry-gtk2 \
+	--enable-pinentry-qt \
+	--disable-pinentry-tty
+%{__make}
+cd ..
+%{__mv} configure.orig configure
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
+%if %{with qt4}
+%{__make} -C build-qt4 install \
 	DESTDIR=$RPM_BUILD_ROOT
+%{__mv} $RPM_BUILD_ROOT%{_bindir}/pinentry-qt{,4}
+%endif
+
+%{__make} -C build install \
+	DESTDIR=$RPM_BUILD_ROOT
+%if %{with qt5}
+%{__mv} $RPM_BUILD_ROOT%{_bindir}/pinentry-qt{,5}
+%endif
 
 %{__rm} $RPM_BUILD_ROOT%{_bindir}/pinentry
 cat >$RPM_BUILD_ROOT%{_bindir}/pinentry <<'EOF'
@@ -154,6 +205,8 @@ elif [ -x %{_bindir}/pinentry-gtk-2 ]; then
 	exec %{_bindir}/pinentry-gtk-2 "$@"
 elif [ -x %{_bindir}/pinentry-gtk ]; then
 	exec %{_bindir}/pinentry-gtk "$@"
+elif [ -x %{_bindir}/pinentry-qt5 ]; then
+	exec %{_bindir}/pinentry-qt5 "$@"
 elif [ -x %{_bindir}/pinentry-qt4 ]; then
 	exec %{_bindir}/pinentry-qt4 "$@"
 elif [ -x %{_bindir}/pinentry-qt ]; then
@@ -200,4 +253,10 @@ rm -rf $RPM_BUILD_ROOT
 %files qt4
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-qt4
+%endif
+
+%if %{with qt5}
+%files qt5
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pinentry-qt5
 %endif
