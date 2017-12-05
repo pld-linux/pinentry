@@ -1,5 +1,7 @@
+# TODO: TQt dialog [BR: pkgconfig(tqt) or pkgconfig(tqt-mt), tqmoc tool]
 #
 # Conditional build:
+%bcond_without	fltk	# FLTK dialog
 %bcond_without	gtk2	# GTK+ 2 dialog
 %bcond_without	gnome3	# GNOME 3 dialog
 %bcond_without	qt4	# Qt4 dialog
@@ -8,14 +10,15 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	1.0.0
+Version:	1.1.0
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	4a3fad8b31f9b4c5526c8837495015dc
+# Source0-md5:	3829315cb0a1e9cedc05ffe6def7a2c6
 Patch0:		%{name}-info.patch
 Patch1:		%{name}-am.patch
+Patch2:		%{name}-format.patch
 URL:		http://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5}
 %{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5}
@@ -24,6 +27,7 @@ URL:		http://www.gnupg.org/
 %{?with_qt4:BuildRequires:	QtGui-devel >= 4}
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake >= 1:1.14
+%{?with_fltk:BuildRequires:	fltk-devel >= 1.3}
 BuildRequires:	gettext-tools
 %{?with_gnome3:BuildRequires:	gcr-devel >= 3}
 %{?with_gnome3:BuildRequires:	gcr-ui-devel >= 3}
@@ -67,6 +71,21 @@ Simple PIN or passphrase entry dialog for Emacs.
 
 %description emacs -l pl.UTF-8
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Emacsa.
+
+%package fltk
+Summary:	Simple PIN or passphrase entry dialog using FLTK
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł wykorzystujący bibliotekę FLTK
+Group:		X11/Applications
+Requires:	fltk >= 1.3
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
+
+%description fltk
+Simple PIN or passphrase entry dialog using FLTK.
+
+%description fltk -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł
+wykorzystujący bibliotekę FLTK.
 
 %package gnome3
 Summary:	Simple PIN or passphrase entry dialog for GNOME 3
@@ -126,6 +145,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %if 0
 cd qt4
@@ -149,6 +169,7 @@ cd build
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
 	--enable-pinentry-emacs \
+	--enable-pinentry-fltk%{!?with_fltk:=no} \
 	--enable-pinentry-gnome3%{!?with_gnome3:=no} \
 	--enable-pinentry-gtk2%{!?with_gtk2:=no} \
 	--enable-pinentry-qt%{!?with_qt5:=no} \
@@ -201,6 +222,8 @@ if [ -n "$PINENTRY_PROGRAM" ]; then
 	exec $PINENTRY_PROGRAM "$@"
 elif [ -z "$DISPLAY" ]; then
 	exec %{_bindir}/pinentry-curses "$@"
+elif [ -x %{_bindir}/pinentry-gnome3 ]; then
+	exec %{_bindir}/pinentry-gnome3 "$@"
 elif [ -x %{_bindir}/pinentry-gtk-2 ]; then
 	exec %{_bindir}/pinentry-gtk-2 "$@"
 elif [ -x %{_bindir}/pinentry-gtk ]; then
@@ -211,6 +234,8 @@ elif [ -x %{_bindir}/pinentry-qt4 ]; then
 	exec %{_bindir}/pinentry-qt4 "$@"
 elif [ -x %{_bindir}/pinentry-qt ]; then
 	exec %{_bindir}/pinentry-qt "$@"
+elif [ -x %{_bindir}/pinentry-fltk ]; then
+	exec %{_bindir}/pinentry-fltk "$@"
 else
 	exec %{_bindir}/pinentry-curses "$@"
 fi
@@ -236,6 +261,12 @@ rm -rf $RPM_BUILD_ROOT
 %files emacs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-emacs
+
+%if %{with fltk}
+%files fltk
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pinentry-fltk
+%endif
 
 %if %{with gnome3}
 %files gnome3
