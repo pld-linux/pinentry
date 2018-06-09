@@ -11,7 +11,7 @@ Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
 Version:	1.1.0
-Release:	2
+Release:	3
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
@@ -35,7 +35,6 @@ BuildRequires:	gettext-tools
 BuildRequires:	libassuan-devel >= 1:2.1.0
 BuildRequires:	libcap-devel
 BuildRequires:	libgpg-error-devel >= 1.16
-BuildRequires:	libsecret-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
@@ -166,6 +165,7 @@ mkdir build
 cd build
 ../%configure \
 	--enable-maintainer-mode \
+	--disable-libsecret \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
 	--enable-pinentry-emacs \
@@ -187,6 +187,7 @@ chmod +x configure
 cd build-qt4
 ../%configure \
 	--enable-maintainer-mode \
+	--disable-libsecret \
 	--enable-fallback-curses \
 	--disable-pinentry-curses \
 	--disable-pinentry-emacs \
