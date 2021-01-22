@@ -1,6 +1,7 @@
 # TODO: TQt dialog [BR: pkgconfig(tqt) or pkgconfig(tqt-mt), tqmoc tool]
 #
 # Conditional build:
+%bcond_with	efl	# EFL dialog
 %bcond_without	fltk	# FLTK dialog
 %bcond_without	gtk2	# GTK+ 2 dialog
 %bcond_without	gnome3	# GNOME 3 dialog
@@ -10,15 +11,14 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	1.1.0
-Release:	3
+Version:	1.1.1
+Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	3829315cb0a1e9cedc05ffe6def7a2c6
+# Source0-md5:	d7f646d373b722317d985cddc1d107c1
 Patch0:		%{name}-info.patch
 Patch1:		%{name}-am.patch
-Patch2:		%{name}-format.patch
 URL:		http://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5}
 %{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5}
@@ -27,11 +27,12 @@ URL:		http://www.gnupg.org/
 %{?with_qt4:BuildRequires:	QtGui-devel >= 4}
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake >= 1:1.14
+%{?with_efl:BuildRequires:	elementary-devel >= 1.18}
 %{?with_fltk:BuildRequires:	fltk-devel >= 1.3}
 BuildRequires:	gettext-tools
 %{?with_gnome3:BuildRequires:	gcr-devel >= 3}
 %{?with_gnome3:BuildRequires:	gcr-ui-devel >= 3}
-%{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.4.0}
+%{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.12.0}
 BuildRequires:	libassuan-devel >= 1:2.1.0
 BuildRequires:	libcap-devel
 BuildRequires:	libgpg-error-devel >= 1.16
@@ -71,9 +72,24 @@ Simple PIN or passphrase entry dialog for Emacs.
 %description emacs -l pl.UTF-8
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Emacsa.
 
+%package efl
+Summary:	Simple PIN or passphrase entry dialog using EFL
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł wykorzystująca bibliotekę EFL
+Group:		X11/Applications
+Requires:	elementary-libs >= 1.18
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
+
+%description efl
+Simple PIN or passphrase entry dialog using EFL.
+
+%description efl -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł
+wykorzystująca bibliotekę EFL.
+
 %package fltk
 Summary:	Simple PIN or passphrase entry dialog using FLTK
-Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł wykorzystujący bibliotekę FLTK
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł wykorzystująca bibliotekę FLTK
 Group:		X11/Applications
 Requires:	fltk >= 1.3
 Requires:	libassuan >= 1:2.1.0
@@ -84,13 +100,13 @@ Simple PIN or passphrase entry dialog using FLTK.
 
 %description fltk -l pl.UTF-8
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł
-wykorzystujący bibliotekę FLTK.
+wykorzystująca bibliotekę FLTK.
 
 %package gnome3
 Summary:	Simple PIN or passphrase entry dialog for GNOME 3
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GNOME 3
 Group:		X11/Applications
-Requires:	gtk+2 >= 2:2.4.0
+Requires:	gtk+2 >= 2:2.12.0
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
 
@@ -104,7 +120,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GNOME 3.
 Summary:	Simple PIN or passphrase entry dialog for GTK+ 2
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GTK+ 2
 Group:		X11/Applications
-Requires:	gtk+2 >= 2:2.4.0
+Requires:	gtk+2 >= 2:2.12.0
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
 
@@ -144,7 +160,6 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %if 0
 cd qt4
@@ -168,6 +183,7 @@ cd build
 	--disable-libsecret \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
+	--enable-pinentry-efl%{!?with_efl:=no} \
 	--enable-pinentry-emacs \
 	--enable-pinentry-fltk%{!?with_fltk:=no} \
 	--enable-pinentry-gnome3%{!?with_gnome3:=no} \
@@ -237,6 +253,8 @@ elif [ -x %{_bindir}/pinentry-qt ]; then
 	exec %{_bindir}/pinentry-qt "$@"
 elif [ -x %{_bindir}/pinentry-fltk ]; then
 	exec %{_bindir}/pinentry-fltk "$@"
+elif [ -x %{_bindir}/pinentry-efl ]; then
+	exec %{_bindir}/pinentry-efl "$@"
 else
 	exec %{_bindir}/pinentry-curses "$@"
 fi
@@ -258,6 +276,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pinentry-curses
 %attr(755,root,root) %{_bindir}/pinentry-tty
 %{_infodir}/pinentry.info*
+
+%if %{with efl}
+%files efl
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pinentry-efl
+%endif
 
 %files emacs
 %defattr(644,root,root,755)
