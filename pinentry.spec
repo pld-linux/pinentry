@@ -106,7 +106,6 @@ wykorzystująca bibliotekę FLTK.
 Summary:	Simple PIN or passphrase entry dialog for GNOME 3
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla GNOME 3
 Group:		X11/Applications
-Requires:	gtk+2 >= 2:2.12.0
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
 
