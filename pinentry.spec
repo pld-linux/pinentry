@@ -12,13 +12,14 @@ Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
 Version:	1.1.1
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
 # Source0-md5:	d7f646d373b722317d985cddc1d107c1
 Patch0:		%{name}-info.patch
 Patch1:		%{name}-am.patch
+Patch2:		%{name}-qt4.patch
 URL:		http://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5}
 %{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5}
@@ -159,6 +160,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %if 0
 cd qt4
