@@ -12,7 +12,7 @@ Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
 Version:	1.2.0
-Release:	1
+Release:	0.1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
