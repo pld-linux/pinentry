@@ -1,0 +1,304 @@
+Revert fefd730651b6881aba374c548ff253517063747a when building for qt4
+--- pinentry-1.2.0/qt/pinentrydialog.cpp.orig	2021-08-25 12:01:31.000000000 +0200
++++ pinentry-1.2.0/qt/pinentrydialog.cpp	2021-09-03 20:48:27.041273145 +0200
+@@ -51,7 +51,9 @@
+ #include <QHBoxLayout>
+ #include <QVBoxLayout>
+ #include <QMessageBox>
++#if QT_VERSION >= 0x050000
+ #include <QRegularExpression>
++#endif
+ #include <QAccessible>
+ 
+ #include <QDebug>
+@@ -687,6 +689,7 @@ PinEntryDialog::PassphraseCheckResult Pi
+         return PassphraseOk;
+     }
+ 
++#if QT_VERSION >= 0x050000
+     const auto messageLines = QString::fromUtf8(QByteArray::fromPercentEncoding(error.get())).split(QChar{'\n'});
+     if (messageLines.isEmpty()) {
+         // shouldn't happen because pinentry_inq_checkpin() either returns NULL or a non-empty string
+@@ -702,6 +705,10 @@ PinEntryDialog::PassphraseCheckResult Pi
+     messageBox.setInformativeText(additionalLines);
+     messageBox.setStandardButtons(QMessageBox::Ok);
+     messageBox.exec();
++#else
++    const auto message = QString::fromUtf8(QByteArray::fromPercentEncoding(error.get()));
++    QMessageBox::warning(this, mConstraintsErrorTitle, message);
++#endif
+     return PassphraseNotOk;
+ }
+ 
+Qt4 requires SIGNAL() and SLOT() wrappers.
+--- pinentry-1.2.0/qt/pinentrydialog.cpp.orig	2021-09-03 22:02:40.073815665 +0200
++++ pinentry-1.2.0/qt/pinentrydialog.cpp	2021-09-03 22:03:02.357028280 +0200
+@@ -159,7 +159,7 @@ PinEntryDialog::PinEntryDialog(QWidget *
+         mGenerateButton = new QPushButton{this};
+         mGenerateButton->setIcon(QIcon::fromTheme(QLatin1String("password-generate")));
+         mGenerateButton->setVisible(false);
+-        connect(mGenerateButton, &QPushButton::clicked, this, &PinEntryDialog::generatePin);
++        connect(mGenerateButton, SIGNAL(&QPushButton::clicked), this, SLOT(&PinEntryDialog::generatePin));
+     }
+ 
+     if (!repeatString.isNull()) {
+@@ -206,8 +206,8 @@ PinEntryDialog::PinEntryDialog(QWidget *
+     connect(_edit, SIGNAL(backspacePressed()),
+             this, SLOT(onBackspace()));
+     if (mRepeat) {
+-        connect(_edit, &QLineEdit::returnPressed,
+-                this, [this] { mRepeat->setFocus(); });
++        connect(_edit, SIGNAL(&QLineEdit::returnPressed),
++                this, SLOT([this] { mRepeat->setFocus(); }));
+     }
+ 
+     auto *const mainLayout = new QVBoxLayout{this};
+@@ -284,10 +284,10 @@ PinEntryDialog::PinEntryDialog(QWidget *
+     mainLayout->addWidget(buttons);
+ 
+     auto capsLockWatcher = new CapsLockWatcher{this};
+-    connect(capsLockWatcher, &CapsLockWatcher::stateChanged,
+-            this, [this] (bool locked) {
++    connect(capsLockWatcher, SIGNAL(&CapsLockWatcher::stateChanged),
++            this, SLOT([this] (bool locked) {
+                 mCapsLockHint->setVisible(locked);
+-            });
++            }));
+ 
+     connect(qApp, SIGNAL(focusChanged(QWidget *, QWidget *)),
+             this, SLOT(focusChanged(QWidget *, QWidget *)));
+Qt4 needs other interfeaces instead of toHtmlEscapes and fromPercentEncoding().
+--- pinentry-1.2.0/qt/pinentrydialog.cpp.orig	2021-09-03 22:02:40.073815665 +0200
++++ pinentry-1.2.0/qt/pinentrydialog.cpp	2021-09-04 09:48:52.387598499 +0200
+@@ -55,6 +55,10 @@
+ #include <QRegularExpression>
+ #endif
+ #include <QAccessible>
++#if QT_VERSION < 0x050000
++#include <QTextDocument>
++#include <QUrl>
++#endif
+ 
+ #include <QDebug>
+ 
+@@ -435,7 +439,13 @@ void PinEntryDialog::setCapsLockHint(con
+ void PinEntryDialog::setFormattedPassphrase(const PinEntryDialog::FormattedPassphraseOptions &options)
+ {
+     mFormatPassphrase = options.formatPassphrase;
+-    mFormattedPassphraseHint->setText(QLatin1String("<html>") + options.hint.toHtmlEscaped() + QLatin1String("</html>"));
++    mFormattedPassphraseHint->setText(QLatin1String("<html>") + 
++#if QT_VERSION >= 0x050000
++                    options.hint.toHtmlEscaped()
++#else
++                    Qt::escape(options.hint)
++#endif
++                    + QLatin1String("</html>"));
+     Accessibility::setName(mFormattedPassphraseHint, options.hint);
+     toggleFormattedPassphrase();
+ }
+@@ -445,8 +455,12 @@ void PinEntryDialog::setConstraintsOptio
+     mEnforceConstraints = options.enforce;
+     mConstraintsHint->setText(options.shortHint);
+     mConstraintsHint->setToolTip(QLatin1String("<html>") +
+-                                 options.longHint.toHtmlEscaped().replace(QLatin1String("\n\n"), QLatin1String("<br>")) +
+-                                 QLatin1String("</html>"));
++#if QT_VERSION >= 0x050000
++                    options.longHint.toHtmlEscaped().replace(QLatin1String("\n\n"), QLatin1String("<br>"))
++#else
++                    Qt::escape(options.longHint).replace(QLatin1String("\n\n"), QLatin1String("<br>"))
++#endif
++                    + QLatin1String("</html>"));
+     Accessibility::setDescription(mConstraintsHint, options.longHint);
+     mConstraintsErrorTitle = options.errorTitle;
+ 
+@@ -706,7 +720,7 @@ PinEntryDialog::PassphraseCheckResult Pi
+     messageBox.setStandardButtons(QMessageBox::Ok);
+     messageBox.exec();
+ #else
+-    const auto message = QString::fromUtf8(QByteArray::fromPercentEncoding(error.get()));
++    const auto message = QString::fromUtf8(QUrl::fromPercentEncoding(error.get()).toAscii());
+     QMessageBox::warning(this, mConstraintsErrorTitle, message);
+ #endif
+     return PassphraseNotOk;
+Qt4 doesn't have qCDebug and QLoggingCategory.
+--- pinentry-1.2.0/qt/pinentry_debug.h.orig	2021-08-13 13:22:25.000000000 +0200
++++ pinentry-1.2.0/qt/pinentry_debug.h	2021-09-04 14:02:20.145211013 +0200
+@@ -21,8 +21,15 @@
+ #ifndef __PINENTRY_QT_DEBUG_H__
+ #define __PINENTRY_QT_DEBUG_H__
+ 
++#include <QtCore/qglobal.h>
++#if QT_VERSION >= 0x050000
+ #include <QLoggingCategory>
+ 
+ Q_DECLARE_LOGGING_CATEGORY(PINENTRY_LOG)
++#else
++#include <QDebug>
++#define PINENTRY_LOG
++#define qCDebug(x) qDebug()
++#endif
+ 
+ #endif // __PINENTRY_QT_DEBUG_H__
+--- pinentry-1.2.0/qt/pinentry_debug.cpp.orig	2021-08-13 13:22:25.000000000 +0200
++++ pinentry-1.2.0/qt/pinentry_debug.cpp	2021-09-04 13:59:33.362781218 +0200
+@@ -24,8 +24,10 @@
+ 
+ #include "pinentry_debug.h"
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+ #if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+ Q_LOGGING_CATEGORY(PINENTRY_LOG, "gpg.pinentry", QtWarningMsg)
+ #else
+ Q_LOGGING_CATEGORY(PINENTRY_LOG, "gpg.pinentry")
+ #endif
++#endif
+Qt4 doesn't have qEnvironmentVariableIsSet().
+--- pinentry-1.2.0/qt/main.cpp.orig	2021-08-25 12:01:31.000000000 +0200
++++ pinentry-1.2.0/qt/main.cpp	2021-09-04 20:10:12.895632674 +0200
+@@ -356,7 +356,11 @@ main(int argc, char *argv[])
+ #ifdef FALLBACK_CURSES
+ #if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
+     // check a few environment variables that are usually set on X11 or Wayland sessions
++#if QT_VERSION >= 0x050000
+     const bool hasWaylandDisplay = qEnvironmentVariableIsSet("WAYLAND_DISPLAY");
++#else
++    const bool hasWaylandDisplay = !qgetenv("WAYLAND_DISPLAY").isNull();
++#endif
+     const bool isWaylandSessionType = qgetenv("XDG_SESSION_TYPE") == "wayland";
+     const bool hasX11Display = pinentry_have_display(argc, argv);
+     const bool isX11SessionType = qgetenv("XDG_SESSION_TYPE") == "x11";
+Qt4 doesn't have QGuiApplication.
+--- pinentry-1.2.0/qt/pinlineedit.cpp.orig	2021-08-25 12:01:31.000000000 +0200
++++ pinentry-1.2.0/qt/pinlineedit.cpp	2021-09-04 21:21:29.425798054 +0200
+@@ -22,7 +22,11 @@
+ #include "pinlineedit.h"
+ 
+ #include <QClipboard>
++#if QT_VERSION >= 0x050000
+ #include <QGuiApplication>
++#else
++#include <QApplication>
++#endif
+ #include <QKeyEvent>
+ 
+ static const int FormattedPassphraseGroupSize = 5;
+@@ -94,7 +98,11 @@ public:
+             text.remove(FormattedPassphraseSeparator);
+         }
+         if (!text.isEmpty()) {
++#if QT_VERSION >= 0x050000
+             QGuiApplication::clipboard()->setText(text);
++#else
++            QApplication::clipboard()->setText(text);
++#endif
+         }
+     }
+ 
+@@ -118,7 +126,11 @@ void PinLineEdit::setFormattedPassphrase
+         return;
+     }
+     d->mFormattedPassphrase = on;
++#if QT_VERSION >= 0x050000
+     Selection selection{selectionStart(), selectionEnd()};
++#else
++    Selection selection{selectionStart(), selectionStart() + selectedText().length()};
++#endif
+     if (d->mFormattedPassphrase) {
+         setText(d->formatted(text()));
+         selection = d->formattedSelection(selection);
+@@ -179,6 +191,7 @@ void PinLineEdit::keyPressEvent(QKeyEven
+         }
+         return;
+     }
++#if QT_VERSION >= 0x050000
+     else if (e == QKeySequence::DeleteCompleteLine) {
+         if (!isReadOnly()) {
+             setSelection(0, text().size());
+@@ -187,6 +200,7 @@ void PinLineEdit::keyPressEvent(QKeyEven
+         }
+         return;
+     }
++#endif
+ 
+     QLineEdit::keyPressEvent(e);
+ 
+--- pinentry-1.2.0/qt/capslock.cpp.orig	2021-08-12 16:30:43.000000000 +0200
++++ pinentry-1.2.0/qt/capslock.cpp	2021-09-04 21:23:26.751829111 +0200
+@@ -25,14 +25,18 @@
+ #include "capslock.h"
+ #include "capslock_p.h"
+ 
++#if QT_VERSION >= 0x050000
+ #include <QGuiApplication>
++#else
++#include <QApplication>
++#endif
+ 
+ #include <QDebug>
+ 
+ CapsLockWatcher::Private::Private(CapsLockWatcher *q)
+     : q{q}
+ {
+-#ifdef PINENTRY_QT_WAYLAND
++#if defined(PINENTRY_QT_WAYLAND) && (QT_VERSION >= 0x050000)
+     if (qApp->platformName() == QLatin1String("wayland")) {
+         watchWayland();
+     }
+@@ -43,11 +47,13 @@ CapsLockWatcher::CapsLockWatcher(QObject
+     : QObject{parent}
+     , d{new Private{this}}
+ {
++#if defined(PINENTRY_QT_WAYLAND) && (QT_VERSION >= 0x050000)
+     if (qApp->platformName() == QLatin1String("wayland")) {
+ #ifndef PINENTRY_QT_WAYLAND
+         qWarning() << "CapsLockWatcher was compiled without support for Wayland";
+ #endif
+     }
++#endif
+ }
+ 
+ #include "capslock.moc"
+--- pinentry-1.2.0/qt/capslock_unix.cpp.orig	2021-08-12 16:30:43.000000000 +0200
++++ pinentry-1.2.0/qt/capslock_unix.cpp	2021-09-04 21:29:12.206624289 +0200
+@@ -32,7 +32,11 @@
+ # include <KWayland/Client/seat.h>
+ #endif
+ 
++#if QT_VERSION >= 0x050000
+ #include <QGuiApplication>
++#else
++#include <QApplication>
++#endif
+ 
+ #ifdef PINENTRY_QT_X11
+ # include <QX11Info>
+@@ -54,12 +58,16 @@ LockState capsLockState()
+ {
+     static bool reportUnsupportedPlatform = true;
+ #ifdef PINENTRY_QT_X11
+-    if (qApp->platformName() == QLatin1String("xcb")) {
++#if QT_VERSION >= 0x050000
++    if (qApp->platformName() == QLatin1String("xcb"))
++#endif
++    {
+         unsigned int state;
+         XkbGetIndicatorState(QX11Info::display(), XkbUseCoreKbd, &state);
+         return (state & 0x01) == 1 ? LockState::On : LockState::Off;
+     }
+ #endif
++#if QT_VERSION >= 0x050000
+ #ifdef PINENTRY_QT_WAYLAND
+     if (qApp->platformName() == QLatin1String("wayland")) {
+         if (!watchingWayland && reportUnsupportedPlatform) {
+@@ -70,6 +78,11 @@ LockState capsLockState()
+     if (reportUnsupportedPlatform) {
+         qWarning() << "Checking for Caps Lock not possible on unsupported platform:" << qApp->platformName();
+     }
++#else
++    if (reportUnsupportedPlatform) {
++        qWarning() << "Checking for Caps Lock not possible on unsupported platform";
++    }
++#endif
+     reportUnsupportedPlatform = false;
+     return LockState::Unknown;
+ }

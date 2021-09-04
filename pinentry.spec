@@ -19,6 +19,7 @@ Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
 # Source0-md5:	32e09a982711d6e705f9d89020424c2d
 Patch0:		%{name}-info.patch
 Patch1:		%{name}-am.patch
+Patch2:		%{name}-qt4.patch
 URL:		http://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5}
 %{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5}
@@ -160,6 +161,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %if 0
 cd qt4
