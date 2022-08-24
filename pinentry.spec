@@ -11,15 +11,13 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	1.2.0
-Release:	0.1
+Version:	1.2.1
+Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	32e09a982711d6e705f9d89020424c2d
+# Source0-md5:	be9b0d4bb493a139d2ec20e9b6872d37
 Patch0:		%{name}-info.patch
-Patch1:		%{name}-am.patch
-Patch2:		%{name}-qt4.patch
 URL:		http://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5}
 %{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5}
@@ -35,6 +33,7 @@ BuildRequires:	gettext-tools
 %{?with_gnome3:BuildRequires:	gcr-devel >= 3}
 %{?with_gnome3:BuildRequires:	gcr-ui-devel >= 3}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.12.0}
+%{?with_qt5:BuildRequires:	kf5-kwayland-devel >= 5.60}
 BuildRequires:	libassuan-devel >= 1:2.1.0
 BuildRequires:	libcap-devel
 BuildRequires:	libgpg-error-devel >= 1.16
@@ -148,6 +147,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 Summary:	Simple PIN or passphrase entry dialog for Qt5
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5
 Group:		X11/Applications
+Requires:	kf5-kwayland >= 5.60
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
 
@@ -160,8 +160,6 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
 
 %if 0
 cd qt4
@@ -178,9 +176,7 @@ cd ..
 %{__automake}
 CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 
-mkdir build
-cd build
-../%configure \
+%configure \
 	--enable-maintainer-mode \
 	--disable-libsecret \
 	--enable-fallback-curses \
@@ -191,43 +187,15 @@ cd build
 	--enable-pinentry-gnome3%{!?with_gnome3:=no} \
 	--enable-pinentry-gtk2%{!?with_gtk2:=no} \
 	--enable-pinentry-qt%{!?with_qt5:=no} \
+	--enable-pinentry-qt4%{!?with_qt4:=no} \
 	--enable-pinentry-tty
 
 %{__make}
-cd ..
-
-%if %{with qt4}
-install -d build-qt4
-# hack: avoid qt5 detection so configure fallbacks to qt4
-%{__mv} configure configure.orig
-%{__sed} -e 's/Qt5Core/Qt999Core/' configure.orig > configure
-chmod +x configure
-cd build-qt4
-../%configure \
-	--enable-maintainer-mode \
-	--disable-libsecret \
-	--enable-fallback-curses \
-	--disable-pinentry-curses \
-	--disable-pinentry-emacs \
-	--disable-pinentry-gnome3 \
-	--disable-pinentry-gtk2 \
-	--enable-pinentry-qt \
-	--disable-pinentry-tty
-%{__make}
-cd ..
-%{__mv} configure.orig configure
-%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%if %{with qt4}
-%{__make} -C build-qt4 install \
-	DESTDIR=$RPM_BUILD_ROOT
-%{__mv} $RPM_BUILD_ROOT%{_bindir}/pinentry-qt{,4}
-%endif
-
-%{__make} -C build install \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 %if %{with qt5}
 %{__mv} $RPM_BUILD_ROOT%{_bindir}/pinentry-qt{,5}
