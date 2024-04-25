@@ -148,7 +148,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 Summary:	Simple PIN or passphrase entry dialog for Qt5
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5
 Group:		X11/Applications
-Requires:	kf5-kwayland >= 5.60
+%{?with_kwayland:Requires:	kf5-kwayland >= 5.60}
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
 
