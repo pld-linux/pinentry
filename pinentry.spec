@@ -1,12 +1,13 @@
 # TODO: TQt dialog [BR: pkgconfig(tqt) or pkgconfig(tqt-mt), tqmoc tool]
 #
 # Conditional build:
-%bcond_with	efl	# EFL dialog
-%bcond_without	fltk	# FLTK dialog
-%bcond_without	gtk2	# GTK+ 2 dialog
-%bcond_without	gnome3	# GNOME 3 dialog
-%bcond_without	qt4	# Qt4 dialog
-%bcond_without	qt5	# Qt5 dialog
+%bcond_with	efl		# EFL dialog
+%bcond_without	fltk		# FLTK dialog
+%bcond_without	gtk2		# GTK+ 2 dialog
+%bcond_without	gnome3		# GNOME 3 dialog
+%bcond_without	qt4		# Qt4 dialog
+%bcond_without	qt5		# Qt5 dialog
+%bcond_without	kwayland	# KF5WaylandClient for Qt5 dialog
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
@@ -33,7 +34,7 @@ BuildRequires:	gettext-tools
 %{?with_gnome3:BuildRequires:	gcr-devel >= 3}
 %{?with_gnome3:BuildRequires:	gcr-ui-devel >= 3}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.12.0}
-%{?with_qt5:BuildRequires:	kf5-kwayland-devel >= 5.60}
+%{?with_qt5:%{?with_kwayland:BuildRequires:	kf5-kwayland-devel >= 5.60}}
 BuildRequires:	libassuan-devel >= 1:2.1.0
 BuildRequires:	libcap-devel
 BuildRequires:	libgpg-error-devel >= 1.16
