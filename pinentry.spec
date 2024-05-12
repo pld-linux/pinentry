@@ -7,23 +7,28 @@
 %bcond_without	gnome3		# GNOME 3 dialog
 %bcond_without	qt4		# Qt4 dialog
 %bcond_without	qt5		# Qt5 dialog
-%bcond_without	kwayland	# KF5WaylandClient for Qt5 dialog
+%bcond_without	qt6		# Qt6 dialog
+%bcond_without	kde		# don't use KDE deps (for Caps Lock detection/window parenting)
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	1.2.1
+Version:	1.3.0
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	be9b0d4bb493a139d2ec20e9b6872d37
+# Source0-md5:	ccae9619032fda53b234849c7c2253ac
 Patch0:		%{name}-info.patch
+Patch1:		qt-defines.patch
 URL:		http://www.gnupg.org/
-%{?with_qt5:BuildRequires:	Qt5Core-devel >= 5}
-%{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5}
-%{?with_qt5:BuildRequires:	Qt5Widgets-devel >= 5}
-%{?with_qt5:BuildRequires:	Qt5X11Extras-devel >= 5}
+%{?with_qt5:BuildRequires:	Qt5Core-devel >= 5.0.0}
+%{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5.0.0}
+%{?with_qt5:BuildRequires:	Qt5Widgets-devel >= 5.0.0}
+%{?with_qt5:BuildRequires:	Qt5X11Extras-devel >= 5.1.0}
+%{?with_qt6:BuildRequires:	Qt6Core-devel >= 6.4.0}
+%{?with_qt6:BuildRequires:	Qt6Gui-devel >= 6.4.0}
+%{?with_qt6:BuildRequires:	Qt6Widgets-devel >= 6.4.0}
 %{?with_qt4:BuildRequires:	QtCore-devel >= 4}
 %{?with_qt4:BuildRequires:	QtGui-devel >= 4}
 BuildRequires:	autoconf >= 2.69
@@ -31,10 +36,12 @@ BuildRequires:	automake >= 1:1.14
 %{?with_efl:BuildRequires:	elementary-devel >= 1.18}
 %{?with_fltk:BuildRequires:	fltk-devel >= 1.3}
 BuildRequires:	gettext-tools
-%{?with_gnome3:BuildRequires:	gcr-devel >= 3}
-%{?with_gnome3:BuildRequires:	gcr-ui-devel >= 3}
+%{?with_gnome3:BuildRequires:	gcr4-devel >= 4}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.12.0}
-%{?with_qt5:%{?with_kwayland:BuildRequires:	kf5-kwayland-devel >= 5.91}}
+%{?with_qt5:%{?with_kde:BuildRequires:	kf5-kwayland-devel >= 5.91}}
+# not available in PLD yet
+#%{?with_qt6:%{?with_kde:BuildRequires:	kf6-kguiaddons-devel >= 5.240}}
+#%{?with_qt6:%{?with_kde:BuildRequires:	kf6-kwindowsystem-devel >= 5.240}}
 BuildRequires:	libassuan-devel >= 1:2.1.0
 BuildRequires:	libcap-devel
 BuildRequires:	libgpg-error-devel >= 1.16
@@ -43,6 +50,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	pkgconfig
 %{?with_qt4:BuildRequires:	qt4-build}
 %{?with_qt5:BuildRequires:	qt5-build}
+%{?with_qt6:BuildRequires:	qt6-build}
 BuildRequires:	texinfo
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
@@ -148,7 +156,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt4.
 Summary:	Simple PIN or passphrase entry dialog for Qt5
 Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5
 Group:		X11/Applications
-%{?with_kwayland:Requires:	kf5-kwayland >= 5.60}
+%{?with_kde:Requires:	kf5-kwayland >= 5.60}
 Requires:	libassuan >= 1:2.1.0
 Requires:	libgpg-error >= 1.16
 
@@ -158,9 +166,30 @@ Simple PIN or passphrase entry dialog for Qt5.
 %description qt5 -l pl.UTF-8
 Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt5.
 
+%package qt6
+Summary:	Simple PIN or passphrase entry dialog for Qt6
+Summary(pl.UTF-8):	Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt6
+Group:		X11/Applications
+Requires:	Qt6Core >= 6.4.0
+Requires:	Qt6Gui >= 6.4.0
+Requires:	Qt6Widgets >= 6.4.0
+#%{?with_kde:Requires:	kf6-kguiaddons >= 5.240}
+#%{?with_kde:Requires:	kf6-kwindowsystem >= 5.240}
+Requires:	libassuan >= 1:2.1.0
+Requires:	libgpg-error >= 1.16
+
+%description qt6
+Simple PIN or passphrase entry dialog for Qt6.
+
+%description qt6 -l pl.UTF-8
+Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt6.
+
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+
+%{__sed} -i -e 's@^\(Exec=.*/pinentry-qt\)$@\16@' qt/org.gnupg.pinentry-qt.desktop.in
 
 %if 0
 cd qt4
@@ -187,8 +216,9 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 	--enable-pinentry-fltk%{!?with_fltk:=no} \
 	--enable-pinentry-gnome3%{!?with_gnome3:=no} \
 	--enable-pinentry-gtk2%{!?with_gtk2:=no} \
-	--enable-pinentry-qt%{!?with_qt5:=no} \
+	--enable-pinentry-qt%{!?with_qt6:=no} \
 	--enable-pinentry-qt4%{!?with_qt4:=no} \
+	--enable-pinentry-qt5%{!?with_qt5:=no} \
 	--enable-pinentry-tty
 
 %{__make}
@@ -198,8 +228,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
-%if %{with qt5}
-%{__mv} $RPM_BUILD_ROOT%{_bindir}/pinentry-qt{,5}
+%if %{with qt6}
+%{__mv} $RPM_BUILD_ROOT%{_bindir}/pinentry-qt{,6}
+%{__mv} $RPM_BUILD_ROOT%{_desktopdir}/org.gnupg.pinentry-qt{,6}.desktop
 %endif
 
 %{__rm} $RPM_BUILD_ROOT%{_bindir}/pinentry
@@ -216,6 +247,8 @@ elif [ -x %{_bindir}/pinentry-gtk-2 ]; then
 	exec %{_bindir}/pinentry-gtk-2 "$@"
 elif [ -x %{_bindir}/pinentry-gtk ]; then
 	exec %{_bindir}/pinentry-gtk "$@"
+elif [ -x %{_bindir}/pinentry-qt6 ]; then
+	exec %{_bindir}/pinentry-qt6 "$@"
 elif [ -x %{_bindir}/pinentry-qt5 ]; then
 	exec %{_bindir}/pinentry-qt5 "$@"
 elif [ -x %{_bindir}/pinentry-qt4 ]; then
@@ -286,4 +319,12 @@ rm -rf $RPM_BUILD_ROOT
 %files qt5
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pinentry-qt5
+%{_desktopdir}/org.gnupg.pinentry-qt5.desktop
+%endif
+
+%if %{with qt6}
+%files qt6
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pinentry-qt6
+%{_desktopdir}/org.gnupg.pinentry-qt6.desktop
 %endif
