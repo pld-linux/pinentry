@@ -34,7 +34,7 @@ BuildRequires:	gettext-tools
 %{?with_gnome3:BuildRequires:	gcr-devel >= 3}
 %{?with_gnome3:BuildRequires:	gcr-ui-devel >= 3}
 %{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.12.0}
-%{?with_qt5:%{?with_kwayland:BuildRequires:	kf5-kwayland-devel >= 5.60}}
+%{?with_qt5:%{?with_kwayland:BuildRequires:	kf5-kwayland-devel >= 5.91}}
 BuildRequires:	libassuan-devel >= 1:2.1.0
 BuildRequires:	libcap-devel
 BuildRequires:	libgpg-error-devel >= 1.16
