@@ -8,7 +8,7 @@
 %bcond_without	qt4		# Qt4 dialog
 %bcond_without	qt5		# Qt5 dialog
 %bcond_without	qt6		# Qt6 dialog
-%bcond_without	kde		# don't use KDE deps (for Caps Lock detection/window parenting)
+%bcond_without	kde		# additional KDE-dependent functionality in Qt dialogs (Caps Lock detection/window parenting)
 #
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
@@ -21,7 +21,7 @@ Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
 # Source0-md5:	ccae9619032fda53b234849c7c2253ac
 Patch0:		%{name}-info.patch
 Patch1:		qt-defines.patch
-URL:		http://www.gnupg.org/
+URL:		https://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5.0.0}
 %{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5.0.0}
 %{?with_qt5:BuildRequires:	Qt5Widgets-devel >= 5.0.0}
