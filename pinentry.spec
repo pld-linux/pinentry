@@ -277,7 +277,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pinentry
 %attr(755,root,root) %{_bindir}/pinentry-curses
 %attr(755,root,root) %{_bindir}/pinentry-tty
+%if %{with qt5} || %{with qt6}
 %{_pixmapsdir}/pinentry.png
+%endif
 %{_infodir}/pinentry.info*
 
 %if %{with efl}
