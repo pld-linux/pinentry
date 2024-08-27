@@ -13,14 +13,13 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	1.3.0
-Release:	2
+Version:	1.3.1
+Release:	1
 License:	GPL v2+
 Group:		Applications
-Source0:	ftp://ftp.gnupg.org/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	ccae9619032fda53b234849c7c2253ac
+Source0:	https://www.gnupg.org/ftp/gcrypt/pinentry/%{name}-%{version}.tar.bz2
+# Source0-md5:	89a6844fcf76d3c022ce6c6e930c17ee
 Patch0:		%{name}-info.patch
-Patch1:		qt-defines.patch
 URL:		https://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5.0.0}
 %{?with_qt5:BuildRequires:	Qt5Gui-devel >= 5.0.0}
@@ -187,7 +186,6 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt6.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %{__sed} -i -e 's@^\(Exec=.*/pinentry-qt\)$@\16@' qt/org.gnupg.pinentry-qt.desktop.in
 
@@ -279,6 +277,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/pinentry
 %attr(755,root,root) %{_bindir}/pinentry-curses
 %attr(755,root,root) %{_bindir}/pinentry-tty
+%{_pixmapsdir}/pinentry.png
 %{_infodir}/pinentry.info*
 
 %if %{with efl}
