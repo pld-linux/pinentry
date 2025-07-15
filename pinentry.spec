@@ -185,7 +185,7 @@ Prosta kontrolka dialogowa do wpisywania PIN-ów lub haseł dla Qt6.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch -P0 -p1
 
 %{__sed} -i -e 's@^\(Exec=.*/pinentry-qt\)$@\16@' qt/org.gnupg.pinentry-qt.desktop.in
 
