@@ -13,12 +13,12 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	1.3.1
+Version:	1.3.2
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	https://www.gnupg.org/ftp/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	89a6844fcf76d3c022ce6c6e930c17ee
+# Source0-md5:	5247373d2e9ac73b1ea662bd270e58a4
 Patch0:		%{name}-info.patch
 URL:		https://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5.0.0}
@@ -30,8 +30,6 @@ URL:		https://www.gnupg.org/
 %{?with_qt6:BuildRequires:	Qt6Widgets-devel >= 6.4.0}
 %{?with_qt4:BuildRequires:	QtCore-devel >= 4}
 %{?with_qt4:BuildRequires:	QtGui-devel >= 4}
-BuildRequires:	autoconf >= 2.69
-BuildRequires:	automake >= 1:1.14
 %{?with_efl:BuildRequires:	elementary-devel >= 1.18}
 %{?with_fltk:BuildRequires:	fltk-devel >= 1.3}
 BuildRequires:	gettext-tools
@@ -198,14 +196,9 @@ cd ..
 %endif
 
 %build
-%{__aclocal} -I m4
-%{__autoconf}
-%{__autoheader}
-%{__automake}
 CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 
 %configure \
-	--enable-maintainer-mode \
 	--disable-libsecret \
 	--enable-fallback-curses \
 	--enable-pinentry-curses \
