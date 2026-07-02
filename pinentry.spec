@@ -13,12 +13,12 @@
 Summary:	Simple PIN or passphrase entry dialogs
 Summary(pl.UTF-8):	Proste kontrolki dialogowe do wpisywania PIN-ów lub haseł
 Name:		pinentry
-Version:	1.3.2
+Version:	1.3.3
 Release:	1
 License:	GPL v2+
 Group:		Applications
 Source0:	https://www.gnupg.org/ftp/gcrypt/pinentry/%{name}-%{version}.tar.bz2
-# Source0-md5:	5247373d2e9ac73b1ea662bd270e58a4
+# Source0-md5:	59a65644180ac2a43a1235d698515b36
 Patch0:		%{name}-info.patch
 URL:		https://www.gnupg.org/
 %{?with_qt5:BuildRequires:	Qt5Core-devel >= 5.0.0}
